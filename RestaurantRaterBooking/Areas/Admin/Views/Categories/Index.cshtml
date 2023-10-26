@@ -1,0 +1,53 @@
+﻿@model IEnumerable<RestaurantRaterBooking.Models.Category>
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				#
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Image)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Name)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			int i = 1;
+		}
+		@foreach (var item in Model)
+		{
+			<tr>
+				<th>
+					@i
+				</th>
+				<td>
+					<img src="@item.Image" width="50" />
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+				<td>
+					<a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+					<a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+				</td>
+			</tr>
+			i++;
+		}
+	</tbody>
+</table>
+

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestaurantRaterBooking.Models
 {
@@ -18,9 +19,11 @@ namespace RestaurantRaterBooking.Models
 
         public string Email { get; set; }
 
-        public TimeOnly OpeningHour { get; set; }
+        public string Offer {  get; set; }
 
-        public TimeOnly ClosingHour { get; set; }
+        public TimeSpan OpeningHour { get; set; }
+
+        public TimeSpan ClosingHour { get; set; }
 
         public string SuitableFor { get; set; }
 
@@ -52,12 +55,12 @@ namespace RestaurantRaterBooking.Models
         public virtual Category? Category { get; set; }
 
 
-        public ICollection<Review> Reviews { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
 
-        public ICollection<Image> Images { get; set; }
+        public ICollection<Image>? Images { get; set; }
 
-        public ICollection<Booking> Bookings { get; set; }
+        public ICollection<Booking>? Bookings { get; set; }
 
-        public ICollection<RestaurantTag> RestaurantTags { get; set; }
-    }
+		public ICollection<Tag>? Tags { get; set; }
+	}
 }

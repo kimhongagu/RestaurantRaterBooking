@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantRaterBooking.Models;
-using AppContext = RestaurantRaterBooking.Models.AppContext;
 
 #nullable disable
 
 namespace RestaurantRaterBooking.Migrations
 {
-    [DbContext(typeof(AppContext))]
+    [DbContext(typeof(Models.AppContext))]
     partial class AppContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -225,6 +224,452 @@ namespace RestaurantRaterBooking.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Blog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EđitedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsHot")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublish")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("PostCategoryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ShortContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostCategoryID");
+
+                    b.ToTable("Blog");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Booking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Adults")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("BookingTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Children")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DepositAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DepositStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RestaurantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("RestaurantID");
+
+                    b.ToTable("Booking");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.City", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("City");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RestaurantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantID");
+
+                    b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.News", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EditedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EđitedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsHot")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublish")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("PostCategoryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ShortContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostCategoryID");
+
+                    b.ToTable("News");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.PostCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostCategory");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("AirConditioning")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("CategoryID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("ChildrenChair")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ChildrenPlayArea")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("CityID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeSpan>("ClosingHour")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("Delivery")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("DirectBill")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EnventDecoration")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Karaoke")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Offer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("OpeningHour")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("OutdoorTable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ParkingSpace")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PrivateRoom")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Projector")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SmokiingArea")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Space")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecialFeature")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SuitableFor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("VATInvoice")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("VisaMasterCard")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Wifi")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryID");
+
+                    b.HasIndex("CityID");
+
+                    b.ToTable("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("RestaurantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("RestaurantID");
+
+                    b.ToTable("Review");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Slider", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CityID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityID");
+
+                    b.ToTable("Slider");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BlogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("NewsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TypeTag")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("NewsId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("Tag");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -274,6 +719,157 @@ namespace RestaurantRaterBooking.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Blog", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.PostCategory", "PostCategory")
+                        .WithMany("Blog")
+                        .HasForeignKey("PostCategoryID");
+
+                    b.Navigation("PostCategory");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Booking", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Bookings")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("RestaurantRaterBooking.Models.Restaurant", "Restaurant")
+                        .WithMany("Bookings")
+                        .HasForeignKey("RestaurantID");
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Image", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.Restaurant", "Restaurant")
+                        .WithMany("Images")
+                        .HasForeignKey("RestaurantID");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.News", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.PostCategory", "PostCategory")
+                        .WithMany("News")
+                        .HasForeignKey("PostCategoryID");
+
+                    b.Navigation("PostCategory");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.Category", "Category")
+                        .WithMany("Restaurants")
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RestaurantRaterBooking.Models.City", "City")
+                        .WithMany("Restaurants")
+                        .HasForeignKey("CityID");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Review", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Review")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("RestaurantRaterBooking.Models.Restaurant", "Restaurant")
+                        .WithMany("Reviews")
+                        .HasForeignKey("RestaurantID");
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Slider", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.City", "City")
+                        .WithMany("Sliders")
+                        .HasForeignKey("CityID");
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Tag", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.Blog", "Blog")
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogId");
+
+                    b.HasOne("RestaurantRaterBooking.Models.News", "News")
+                        .WithMany("Tags")
+                        .HasForeignKey("NewsId");
+
+                    b.HasOne("RestaurantRaterBooking.Models.Restaurant", "Restaurant")
+                        .WithMany("Tags")
+                        .HasForeignKey("RestaurantId");
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("News");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("Review");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Blog", b =>
+                {
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Category", b =>
+                {
+                    b.Navigation("Restaurants");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.City", b =>
+                {
+                    b.Navigation("Restaurants");
+
+                    b.Navigation("Sliders");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.News", b =>
+                {
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.PostCategory", b =>
+                {
+                    b.Navigation("Blog");
+
+                    b.Navigation("News");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

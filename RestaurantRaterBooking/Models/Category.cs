@@ -1,4 +1,6 @@
-﻿namespace RestaurantRaterBooking.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RestaurantRaterBooking.Models
 {
     public class Category
     {
@@ -8,8 +10,10 @@
 
         public string Description { get; set; }
 
-        public string Image { get; set; }
+        public string? Image { get; set; }
+        [NotMapped]
+        public IFormFile? CoverImage { get; set; }
 
-        public ICollection<Restaurant> Restaurants { get; set; }
+        public ICollection<Restaurant>? Restaurants { get; set; }
     }
 }

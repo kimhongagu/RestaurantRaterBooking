@@ -4,9 +4,9 @@
     {
         public Guid Id { get; set; }
 
-        public DateOnly BookingDate { get; set; }
+        public DateTime BookingDate { get; set; }
 
-        public TimeOnly BookingTime { get; set; }
+        public DateTime BookingTime { get; set; }
 
         public int Adults { get; set; }
 

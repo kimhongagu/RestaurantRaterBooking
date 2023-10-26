@@ -1,0 +1,19 @@
+﻿@model List<Tag>
+
+<div class="container">
+	<div class="input-container">
+		<input type="text" placeholder="Type in something..." id="input" onkeyup="addTag(event)" />
+	</div>
+	<div class="tags-container">
+		@if (Model != null)
+		{
+			@foreach (var tag in Model)
+			{
+				<span class="tag">
+					<span class="tag-text">@tag</span>
+					<span class="tag-close" onclick="removeTag(this)"> ⌫ </span>
+				</span>
+			}
+		}
+	</div>
+</div>

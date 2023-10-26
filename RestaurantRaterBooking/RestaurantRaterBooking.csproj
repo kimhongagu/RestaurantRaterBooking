@@ -20,4 +20,19 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\ckfinder\userfiles\" />
+    <Folder Include="wwwroot\Uploads\Categories\" />
+    <Folder Include="wwwroot\Uploads\Restaurants\menuImages\" />
+    <Folder Include="wwwroot\Uploads\Restaurants\resImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CKFinder">
+      <HintPath>..\..\..\..\ASP.NET CORE MVC\CrystalClarityEyewearWebApp\CrystalClarityEyewearWebApp\wwwroot\ckfinder\bin\Release\CKFinder.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

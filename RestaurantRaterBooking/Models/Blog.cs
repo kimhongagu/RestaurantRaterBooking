@@ -27,6 +27,6 @@
         public Guid? PostCategoryID { get; set; }
         public virtual PostCategory? PostCategory { get; set; }
 
-        public ICollection<BlogTag> BlogTags { get; set; }
-    }
+		public ICollection<Tag> Tags { get; set; }
+	}
 }

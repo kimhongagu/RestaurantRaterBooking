@@ -6,8 +6,22 @@
 
         public string Name { get; set; }
 
-        public ICollection<BlogTag> BlogTags { get; set; }
-        public ICollection<NewsTag> NewsTags { get; set; }
-        public ICollection<RestaurantTag> RestaurantTags { get; set; }
-    }
+		public TagType TypeTag { get; set; }
+
+		public Guid? RestaurantId { get; set; }
+		public virtual Restaurant? Restaurant { get; set; }
+
+		public Guid? BlogId { get; set; }
+		public virtual Blog? Blog { get; set; }
+
+		public Guid? NewsId { get; set; }
+		public virtual News? News { get; set; }
+	}
+
+	public enum TagType
+	{
+		Restaurant,
+		Blog,
+		News
+	}
 }
