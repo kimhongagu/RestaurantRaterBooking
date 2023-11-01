@@ -2,16 +2,19 @@
 
 @{
 	ViewData["Title"] = "Create";
+	var tags = ViewData["Tags"] as List<Tag>;
+	int totalTags = tags.Count;
+	int baseTagsPerColumn = totalTags / 4;
+	int remainder = totalTags % 4;
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
 <h1>Create</h1>
 
 <h4>Restaurant</h4>
 <hr />
 <div class="row ml-2 mr-2">
 	<div class="col-md-12">
-		<form asp-action="Create" enctype="multipart/form-data">
+		<form asp-action="Create" enctype="multipart/form-data" id="restaurantForm">
 			<div asp-validation-summary="All" class="text-danger"></div>
 			<div class="form-group">
 				<label asp-for="Name" class="control-label"></label>
@@ -49,16 +52,6 @@
 				<input asp-for="Offer" class="form-control" />
 				<span asp-validation-for="Offer" class="text-danger"></span>
 			</div>
-			@* <div class="form-group">
-			<label asp-for="OpeningHour" class="control-label"></label>
-			<input asp-for="OpeningHour" class="form-control" />
-			<span asp-validation-for="OpeningHour" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-			<label asp-for="ClosingHour" class="control-label"></label>
-			<input asp-for="ClosingHour" class="form-control" />
-			<span asp-validation-for="ClosingHour" class="text-danger"></span>
-			</div> *@
 			<div class="form-group">
 				<label asp-for="OpeningHour" class="control-label"></label>
 				<input asp-for="OpeningHour" class="form-control" type="time" step="1800" />
@@ -114,6 +107,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="row">
 				<div class="col-4">
 					<div class="form-group form-check">
@@ -137,6 +131,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="row">
 				<div class="col-4">
 					<div class="form-group form-check">
@@ -160,6 +155,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="row">
 				<div class="col-4">
 					<div class="form-group form-check">
@@ -183,6 +179,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="row">
 				<div class="col-4">
 					<div class="form-group form-check">
@@ -212,18 +209,38 @@
 
 			<div class="form-group">
 				<label for="restaurantImages">Restaurant Images:</label>
-				<input type="file" id="restaurantImages" name="restaurantImages" class="form-control" multiple />
+				<input type="file" id="restaurantImages" name="restaurantImages" class="form-control" multiple onchange="previewImages('restaurantImages', 'restaurantImageList', restaurantFileList)" />
 			</div>
+			<output id="restaurantImageList"></output>
 
 			<div class="form-group">
 				<label for="menuImages">Menu Images:</label>
-				<input type="file" id="menuImages" name="menuImages" class="form-control" multiple />
+				<input type="file" id="menuImages" name="menuImages" class="form-control" multiple onchange="previewImages('menuImages', 'menuImageList', menuFileList)" />
 			</div>
+			<output id="menuImageList"></output>
+
 			<div class="form-group">
-				<label asp-for="Tags" class="control-label"></label>
-				<input type="hidden" id="hiddenTags" name="Tags" />
-				<partial name="_Taglist" model="@Model.Tags" />
-				<span asp-validation-for="Tags" class="text-danger"></span>
+				<label for="tags">Tags</label>
+				<div class="row">
+					@for (int i = 0; i < 4; i++)
+					{
+						<div class="col-3">
+							@for (int j = 0; j < baseTagsPerColumn + (i < remainder ? 1 : 0); j++)
+							{
+								int tagIndex = i * baseTagsPerColumn + j + Math.Min(i, remainder);
+								if (tagIndex < totalTags)
+								{
+									var tag = tags[tagIndex];
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="@tag.Id" name="selectedTags" value="@tag.Id" />
+										<label class="form-check-label" for="@tag.Id">@tag.Name</label>
+									</div>
+								}
+							}
+						</div>
+					}
+				</div>
+				<small id="tagError" class="form-text text-danger" style="display:none;">You must select between 1 and 10 tags.</small>
 			</div>
 
 			<div class="form-group">
@@ -238,26 +255,109 @@
 </div>
 
 <script>
-	document.getElementById('tagInput').addEventListener('keypress', function (e) {
-		if (e.key === 'Enter') {
-			e.preventDefault();
+	let restaurantFileList = [];
+	let menuFileList = [];
 
-			var input = e.target;
-			var tags = input.value.split(',').map(function (tag) {
-				return tag.trim();
-			});
+	function previewImages(inputId, outputId, fileList) {
+		const input = document.getElementById(inputId);
+		const output = document.getElementById(outputId);
 
-			var tagList = document.getElementById('tagList');
-			tagList.innerHTML = '';
+		// Lưu trữ các tệp đã chọn
+		const files = input.files;
 
-			for (var i = 0; i < tags.length; i++) {
-				var span = document.createElement('span');
-				span.className = 'tag';
-				span.innerText = tags[i];
-				tagList.appendChild(span);
+		// Cập nhật danh sách tệp
+		fileList.push(...Array.from(files));
+
+		// Cập nhật thuộc tính files của input
+		const newFileList = new DataTransfer();
+		fileList.forEach(f => newFileList.items.add(f));
+		input.files = newFileList.files;
+
+		// Xóa hình ảnh hiện tại từ giao diện
+		output.innerHTML = '';
+
+		// Duyệt qua từng tệp và hiển thị ảnh tương ứng
+		for (const file of fileList) {
+			const reader = new FileReader();
+
+			reader.onload = function (e) {
+				const imgElement = document.createElement('img');
+				imgElement.src = e.target.result;
+				imgElement.style.width = '150px';
+				imgElement.style.margin = '10px';
+				imgElement.style.position = 'relative';
+				imgElement.classList.add('img-preview');
+
+				const deleteBtn = document.createElement('button');
+				deleteBtn.innerText = 'X';
+				deleteBtn.style.position = 'absolute';
+				deleteBtn.style.top = '0';
+				deleteBtn.style.right = '0';
+				deleteBtn.style.borderRadius = '50%';
+				deleteBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+				deleteBtn.style.color = 'red';
+				deleteBtn.style.border = 'none';
+				deleteBtn.style.padding = '2px 5px';
+				deleteBtn.onclick = function () { removeImage(file, imgElement, deleteBtn, inputId, fileList); }
+
+				const container = document.createElement('div');
+				container.style.display = 'inline-block';
+				container.style.position = 'relative';
+				container.classList.add('img-container');
+				container.appendChild(imgElement);
+				container.appendChild(deleteBtn);
+
+				output.appendChild(container);
 			}
 
-			input.value = '';
+			reader.readAsDataURL(file);
+		}
+	}
+
+	function removeImage(file, imgElement, deleteBtn, inputId, fileList) {
+		// Xóa từ giao diện người dùng
+		const container = imgElement.parentElement;
+		container.removeChild(imgElement);
+		container.removeChild(deleteBtn);
+
+		// Xóa khỏi danh sách các tệp đã chọn
+		const index = fileList.indexOf(file);
+		if (index > -1) {
+			fileList.splice(index, 1);
+		}
+
+		// Cập nhật thuộc tính files của input
+		const input = document.getElementById(inputId);
+		const newFileList = new DataTransfer();
+		fileList.forEach(f => newFileList.items.add(f));
+		input.files = newFileList.files;
+	}
+
+	function handleSubmit() {
+		const formData = new FormData();
+
+		// Duyệt qua tất cả các tệp trong fileList và thêm chúng vào formData
+		restaurantFileList.forEach((file, index) => {
+			formData.append(`restaurantImages[${index}]`, file);
+		});
+
+		menuFileList.forEach((file, index) => {
+			formData.append(`menuImages[${index}]`, file);
+		});
+
+		// Gửi formData đến server
+		fetch('/Restaurants/Create', {
+			method: 'POST',
+			body: formData
+		});
+	}
+
+	document.getElementById('restaurantForm').addEventListener('submit', function (e) {
+		var selectedTags = document.querySelectorAll('input[name="selectedTags"]:checked').length;
+
+		if (selectedTags < 1 || selectedTags > 10) {
+			e.preventDefault();
+			document.getElementById('tagError').style.display = 'block';
 		}
 	});
 
@@ -267,8 +367,8 @@
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-
-	<script src="~/js/tags-input.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://cdn.rawgit.com/devbridge/jQuery-Autocomplete/master/dist/jquery.autocomplete.min.js"></script>
 
 	<script>
 		$(document).ready(function () {
@@ -277,13 +377,5 @@
 				extraAllowedContent: 'span',
 			});
 		});
-
-		function BrowseServer(field) {
-			var finder = new CKFinder();
-			finder.selectActionFunction = function (fileUrl) {
-				document.getElementById(field).value = fileUrl;
-			};
-			finder.popup();
-		}
 	</script>
 }

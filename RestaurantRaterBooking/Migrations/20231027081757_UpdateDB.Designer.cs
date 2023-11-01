@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantRaterBooking.Models;
 
@@ -11,9 +12,11 @@ using RestaurantRaterBooking.Models;
 namespace RestaurantRaterBooking.Migrations
 {
     [DbContext(typeof(Models.AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20231027081757_UpdateDB")]
+    partial class UpdateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,26 +233,26 @@ namespace RestaurantRaterBooking.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Alias")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EditedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("EditedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EđitedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Image")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsHot")
@@ -274,27 +277,6 @@ namespace RestaurantRaterBooking.Migrations
                     b.HasIndex("PostCategoryID");
 
                     b.ToTable("Blog");
-                });
-
-            modelBuilder.Entity("RestaurantRaterBooking.Models.BlogTag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BlogId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlogId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("BlogTag");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Booking", b =>
@@ -421,26 +403,26 @@ namespace RestaurantRaterBooking.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Alias")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EditedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("EditedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EđitedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Image")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsHot")
@@ -467,27 +449,6 @@ namespace RestaurantRaterBooking.Migrations
                     b.ToTable("News");
                 });
 
-            modelBuilder.Entity("RestaurantRaterBooking.Models.NewsTag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("NewsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NewsId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("NewsTag");
-                });
-
             modelBuilder.Entity("RestaurantRaterBooking.Models.PostCategory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -497,9 +458,6 @@ namespace RestaurantRaterBooking.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostType")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -709,14 +667,21 @@ namespace RestaurantRaterBooking.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BlogId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TagType")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("NewsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("NewsId");
 
                     b.ToTable("Tag");
                 });
@@ -781,25 +746,6 @@ namespace RestaurantRaterBooking.Migrations
                     b.Navigation("PostCategory");
                 });
 
-            modelBuilder.Entity("RestaurantRaterBooking.Models.BlogTag", b =>
-                {
-                    b.HasOne("RestaurantRaterBooking.Models.Blog", "Blog")
-                        .WithMany("BlogTags")
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RestaurantRaterBooking.Models.Tag", "Tag")
-                        .WithMany("BlogTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Blog");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("RestaurantRaterBooking.Models.Booking", b =>
                 {
                     b.HasOne("RestaurantRaterBooking.Models.ApplicationUser", "ApplicationUser")
@@ -831,25 +777,6 @@ namespace RestaurantRaterBooking.Migrations
                         .HasForeignKey("PostCategoryID");
 
                     b.Navigation("PostCategory");
-                });
-
-            modelBuilder.Entity("RestaurantRaterBooking.Models.NewsTag", b =>
-                {
-                    b.HasOne("RestaurantRaterBooking.Models.News", "News")
-                        .WithMany("NewsTags")
-                        .HasForeignKey("NewsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RestaurantRaterBooking.Models.Tag", "Tag")
-                        .WithMany("NewsTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("News");
-
-                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>
@@ -912,6 +839,17 @@ namespace RestaurantRaterBooking.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Tag", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.Blog", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogId");
+
+                    b.HasOne("RestaurantRaterBooking.Models.News", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("NewsId");
+                });
+
             modelBuilder.Entity("RestaurantRaterBooking.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Bookings");
@@ -921,7 +859,7 @@ namespace RestaurantRaterBooking.Migrations
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Blog", b =>
                 {
-                    b.Navigation("BlogTags");
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Category", b =>
@@ -938,7 +876,7 @@ namespace RestaurantRaterBooking.Migrations
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.News", b =>
                 {
-                    b.Navigation("NewsTags");
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.PostCategory", b =>
@@ -961,10 +899,6 @@ namespace RestaurantRaterBooking.Migrations
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Tag", b =>
                 {
-                    b.Navigation("BlogTags");
-
-                    b.Navigation("NewsTags");
-
                     b.Navigation("RestaurantTags");
                 });
 #pragma warning restore 612, 618

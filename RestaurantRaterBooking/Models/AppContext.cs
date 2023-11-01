@@ -47,4 +47,14 @@ public class AppContext : IdentityDbContext<ApplicationUser>
     public DbSet<RestaurantRaterBooking.Models.Image> Image { get; set; } = default!;
 
     public DbSet<RestaurantRaterBooking.Models.Tag> Tag { get; set; } = default!;
+
+	public DbSet<RestaurantRaterBooking.Models.RestaurantTag> RestaurantTag { get; set; } = default!;
+
+	public DbSet<RestaurantRaterBooking.Models.News> News { get; set; } = default!;
+
+    public DbSet<RestaurantRaterBooking.Models.NewsTag> NewsTag { get; set; } = default!;
+
+    public DbSet<RestaurantRaterBooking.Models.Blog> Blog { get; set; } = default!;
+
+    public DbSet<RestaurantRaterBooking.Models.BlogTag> BlogTag { get; set; } = default!;
 }

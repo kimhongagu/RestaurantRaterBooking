@@ -1,0 +1,123 @@
+﻿@model RestaurantRaterBooking.Models.News
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var tags = ViewData["Tags"] as List<Tag>;
+    int totalTags = tags?.Count ?? 0;
+    int baseTagsPerColumn = totalTags / 4;
+    int remainder = totalTags % 4;
+}
+
+<h1>Create</h1>
+
+<h4>News</h4>
+<hr />
+<div class="row ml-2 mr-2">
+    <div class="col-md-12">
+        <form asp-action="Create" enctype="multipart/form-data" id="newsForm">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShortContent" class="control-label"></label>
+                <input asp-for="ShortContent" class="form-control" />
+                <span asp-validation-for="ShortContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content" class="form-control" id="txtDesciption"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoverImage" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="CoverImage" type="file" class="form-control" id="fileInput" style="display: none;" />
+                    <input type="text" class="form-control" readonly id="fileName" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
+                    </div>
+                </div>
+                <span asp-validation-for="CoverImage" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsPublish" /> @Html.DisplayNameFor(model => model.IsPublish)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsHot" /> @Html.DisplayNameFor(model => model.IsHot)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="PostCategoryID" class="control-label"></label>
+                <select asp-for="PostCategoryID" class ="form-control" asp-items="ViewBag.PostCategoryID"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags</label>
+                <div class="row">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <div class="col-3">
+                            @for (int j = 0; j < baseTagsPerColumn + (i < remainder ? 1 : 0); j++)
+                            {
+                                int tagIndex = i * baseTagsPerColumn + j + Math.Min(i, remainder);
+                                if (tagIndex < totalTags)
+                                {
+                                    var tag = tags[tagIndex];
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="@tag.Id" name="selectedTags" value="@tag.Id" />
+                                        <label class="form-check-label" for="@tag.Id">@tag.Name</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+                <small id="tagError" class="form-text text-danger" style="display:none;">You must select between 1 and 10 tags.</small>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        document.getElementById('fileName').value = this.files[0].name;
+    });
+
+    document.getElementById('newsForm').addEventListener('submit', function (e) {
+        var selectedTags = document.querySelectorAll('input[name="selectedTags"]:checked').length;
+
+        if (selectedTags < 1 || selectedTags > 10) {
+            e.preventDefault();
+            document.getElementById('tagError').style.display = 'block';
+        }
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('txtDesciption', {
+                customConfig: '~/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+    </script>
+}

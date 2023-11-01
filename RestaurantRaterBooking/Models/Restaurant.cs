@@ -61,6 +61,7 @@ namespace RestaurantRaterBooking.Models
 
         public ICollection<Booking>? Bookings { get; set; }
 
-		public ICollection<Tag>? Tags { get; set; }
+		//public ICollection<Tag>? Tags { get; set; }
+		public ICollection<RestaurantTag>? RestaurantTags { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RestaurantRaterBooking.Models.Restaurant>
+﻿@model IEnumerable<RestaurantRaterBooking.Models.News>
 
 @{
 	ViewData["Title"] = "Index";
@@ -15,19 +15,16 @@
 	<thead>
 		<tr>
 			<th>
-				@Html.DisplayNameFor(model => model.Name)
+				@Html.DisplayNameFor(model => model.Image)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Phone)
+				@Html.DisplayNameFor(model => model.Title)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Email)
+				@Html.DisplayNameFor(model => model.IsPublish)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Category)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.City)
+				@Html.DisplayNameFor(model => model.PostCategory)
 			</th>
 			<th></th>
 		</tr>
@@ -37,29 +34,26 @@
 		{
 			<tr>
 				<td>
-					@Html.DisplayFor(modelItem => item.Name)
+					<img src="@item.Image" width="50" />
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Phone)
+					@Html.DisplayFor(modelItem => item.Title)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Email)
+					@Html.DisplayFor(modelItem => item.IsPublish)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Category.Name)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.City.Name)
+					@Html.DisplayFor(modelItem => item.PostCategory.Name)
 				</td>
 				<td>
 					<a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+					@* <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
 					<a class="btn btn-outline-danger deleteButton" href="#" data-toggle="modal" data-target="#deleteConfirmationModal" data-id="@item.Id">Delete</a>
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
-
 <!-- Modal -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -71,7 +65,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				Bạn có chắc chắn muốn xóa nhà hàng này không?
+				Bạn có chắc chắn muốn xóa bản ghi này không?
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -80,20 +74,22 @@
 		</div>
 	</div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-	var restaurantIdToDelete;
+	var IdToDelete;
 
 	$(document).ready(function () {
 		// Hiển thị modal xóa nhà hàng
 		$('.deleteButton').click(function () {
-			restaurantIdToDelete = $(this).data('id');
+			IdToDelete = $(this).data('id');
 			$('#deleteConfirmationModal').modal('show');
 		});
 
 		// Xóa nhà hàng khi nhấn nút "Xóa" trên modal
 		$('#confirmDeleteButton').click(function () {
-			var url = '/Admin/Restaurants/Delete/' + restaurantIdToDelete;
+			var url = '/Admin/News/Delete/' + IdToDelete;
 
 			$.ajax({
 				type: "POST",
@@ -102,17 +98,13 @@
 					RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
 				},
 				success: function (data) {
-					// Xử lý khi xóa thành công
 					alert("Đã xóa thành công");
 					location.reload();
 				},
 				error: function (data) {
-					// Xử lý khi xóa thất bại
 					alert("Xóa thất bại");
 				}
 			});
 		});
 	});
 </script>
-
-
