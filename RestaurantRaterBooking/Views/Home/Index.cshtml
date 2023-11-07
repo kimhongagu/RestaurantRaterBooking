@@ -1,8 +1,351 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	var pagedListRestaurants = ViewData["Restaurants"] as IPagedList<Restaurant>;
+	var restaurantImages = ViewData["RestaurantImages"] as Dictionary<Guid, string>;
+	var blogs = ViewData["Blogs"] as List<Blog>;
+	var news = ViewData["News"] as List<News>;
+	var categories = ViewData["Categories"] as List<Category>;
 }
+<style>
+	.pagination .page-item.active .page-link {
+		background-color: black !important;
+		border-color: black !important;
+		color: white;
+	}
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+	.pagination .page-item .page-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center !important;
+	}
+</style>
+
+<!--====== Slider Start ======-->
+
+<section class="slider-area slider-15 slider-active">
+	<div class="single-slider bg_cover d-flex align-items-center paroller"
+		 style="background-image: url(assets/images/slider/slider-15-1.jpg);" data-paroller-factor="-0.15"
+		 data-paroller-type="foreground" data-paroller-direction="vertical">
+
+		<div class="container">
+			<div class="slider-content-15-1 text-center">
+				<div class="slider-sub-title">
+					<h5 class="sub-title"><span data-animation="slideInLeft" data-delay="0.6s">OC Wine Store - Premium Quality</span></h5>
+				</div>
+				<div class="slider-main-title">
+					<h1 class="main-title"><span data-animation="slideInLeft" data-delay="1.2s">Welcome to Wine Store</span></h1>
+				</div>
+				<div class="slider-btn">
+					<a data-animation="slideInLeft" data-delay="2s" href="#" class="main-btn">Click Here</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="single-slider bg_cover d-flex align-items-center paroller"
+		 style="background-image: url(assets/images/slider/slider-15-2.jpg);" data-paroller-factor="-0.15"
+		 data-paroller-type="foreground" data-paroller-direction="vertical">
+		<div class="container">
+			<div class="slider-content-15-2 text-center">
+				<div class="slider-title-wrapper">
+					<img data-animation="zoomIn" data-delay="0.6s" class="slider-banner" src="assets/images/slider/slider-15-2-1.png" alt="">
+					<div class="slider-title">
+						<h1 class="title"><span data-animation="zoomIn" data-delay="1.2s">Praducci Wine Classic</span></h1>
+					</div>
+				</div>
+				<div class="slider-btn">
+					<a data-animation="zoomIn" data-delay="2s" href="#" class="main-btn">Shop Now</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="single-slider bg_cover d-flex align-items-center paroller"
+		 style="background-image: url(assets/images/slider/slider-15-3.jpg);" data-paroller-factor="-0.15"
+		 data-paroller-type="foreground" data-paroller-direction="vertical">
+		<div class="container">
+			<div class="slider-content-15-3">
+				<div class="slider-sub-title">
+					<h5 class="sub-title"><span data-animation="slideInLeft" data-delay="0.6s">Ugly Sweater Red Blend 750 mL Wine</span></h5>
+				</div>
+				<div class="slider-main-title">
+					<h1 class="main-title"><span data-animation="slideInLeft" data-delay="1.2s">Apotic Rose</span></h1>
+				</div>
+				<div class="slider-price">
+					<p class="price"><span data-animation="slideInLeft" data-delay="1.8s">$45.55</span></p>
+				</div>
+				<div class="slider-btn">
+					<a data-animation="slideInLeft" data-delay="2.4s" href="#" class="main-btn">Shop Now</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--====== Slider Ends ======-->
+<!--====== Restaurant Start ======-->
+
+<section class="product-area pt-75 pb-70">
+
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<div class="section-title-6 text-center pb-30">
+					<h2 class="title">Top Restaurants</h2>
+					<p>Suspendisse non justo auctor lacinia justo</p>
+				</div>
+			</div>
+		</div>
+		<div class="product-menu">
+			<ul class="nav justify-content-center">
+				@foreach (var category in categories)
+				{
+					<li>
+						<a data-bs-toggle="tab" href="#">@category.Name</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid custom-container-2">
+		<div class="tab-content">
+			<div class="tab-pane fade show active" id="all">
+				<div class="row">
+					@foreach (var restaurant in pagedListRestaurants)
+					{
+						var restaurantImage = restaurantImages[restaurant.Id];
+						<div class="col-lg-3 col-md-4 col-sm-6">
+							<div class="single-product mt-50">
+								<div class="product-image">
+									<div class="image">
+										@* <img class="product-1" src="assets/images/product/product-89.jpg" alt="product"> *@
+										<img class="product-1" style="height: 300px; object-fit: cover; object-position: center; " src="~/@restaurantImage">
+										<a class="link" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"></a>
+									</div>
+									<ul class="product-meta text-center">
+										<li><a data-bs-tooltip="tooltip"  asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"><i class="fal fa-search-plus"></i></a></li>
+										@* <li><a data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Wishlist" href="#"><i class="fal fa-heart"></i></a></li> *@
+										@* data-bs-placement="top" title="Quick Shop" data-bs-toggle="modal" data-bs-target="#productQuick" *@
+									</ul>
+								</div>
+								<div class="product-content d-flex justify-content-between">
+									<div class="product-title">
+										<h4 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id">@restaurant.Name</a></h4>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="pagination-items pt-120">
+			<ul class="pagination justify-content-center">
+				@if (pagedListRestaurants.HasPreviousPage)
+				{
+					<li class="page-item">
+						<a class="prev page-link" href="@Url.Action("Index", new { page = pagedListRestaurants.PageNumber - 1 })">Previous</a>
+					</li>
+				}
+
+				@for (var i = 1; i <= pagedListRestaurants.PageCount; i++)
+				{
+					<li class="page-item @(i == pagedListRestaurants.PageNumber ? "active" : "")">
+						<a class="page-link" href="@Url.Action("Index", new { page = i })" style="text-align: center;">@i</a>
+					</li>
+				}
+
+				@if (pagedListRestaurants.HasNextPage)
+				{
+					<li class="page-item">
+						<a class="next page-link" href="@Url.Action("Index", new { page = pagedListRestaurants.PageNumber + 1 })">Next</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+
+</section>
+
+<!--====== Restaurant Ends ======-->
+
+<!--====== Counter Start ======-->
+
+<div class="counter-area bg_cover" style="background-image: url(assets/images/m13-bg-1.jpg);">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-sm-6">
+				<div class="single-counter">
+					<div class="counter-icon">
+						<img src="assets/images/icon/m13-i-1.png" alt="">
+					</div>
+					<div class="counter-content">
+						<span class="count"><span class="counter">243</span></span>
+						<p>Montague Paratrooper</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single-counter">
+					<div class="counter-icon">
+						<img src="assets/images/icon/m13-i-2.png" alt="">
+					</div>
+					<div class="counter-content">
+						<span class="count"><span class="counter">67</span></span>
+						<p>Montague Paratrooper</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single-counter">
+					<div class="counter-icon">
+						<img src="assets/images/icon/m13-i-3.png" alt="">
+					</div>
+					<div class="counter-content">
+						<span class="count"><span class="counter">1923</span></span>
+						<p>Montague Paratrooper</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-sm-6">
+				<div class="single-counter">
+					<div class="counter-icon">
+						<img src="assets/images/icon/m13-i-4.png" alt="">
+					</div>
+					<div class="counter-content">
+						<span class="count"><span class="counter">768</span></span>
+						<p>Montague Paratrooper</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+<!--====== Counter Ends ======-->
+
+<!--====== Blog Start ======-->
+
+<section class="blog-area pt-75 pb-80">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<div class="section-title-6 text-center pb-30">
+					<h2 class="title">Latest Blog</h2>
+					<p>Suspendisse non justo auctor lacinia justo</p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			@foreach (var blog in blogs)
+			{
+				<div class="col-md-6">
+					<div class="single-blog mt-30">
+						<div class="blog-image">
+							<a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id">
+								<img style="height: 304px; object-fit: cover; object-position: center; " src="@blog.Image" alt="blog">
+								<i class="fal fa-search-plus"></i>
+							</a>
+							<ul class="blog-category-2">
+								<li><a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id">@blog.PostCategory.Name</a></li>
+							</ul>
+						</div>
+						<div class="blog-content text-center">
+							<h4 class="title"><a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id">@blog.Title</a></h4>
+							<ul class="blog-meta">
+								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#"><i class="fal fa-clock"></i> @blog.CreatedAt</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			}
+
+		</div>
+	</div>
+</section>
+
+<!--====== Blog Ends ======-->
+
+<!--====== News Start ======-->
+
+<section class="blog-area pt-75 pb-80">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<div class="section-title-6 text-center pb-30">
+					<h2 class="title">Latest News</h2>
+					<p>Suspendisse non justo auctor lacinia justo</p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			@foreach (var item in news)
+			{
+				<div class="col-md-6">
+					<div class="single-blog mt-30">
+						<div class="blog-image">
+							<a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">
+								<img style="height: 304px; object-fit: cover; object-position: center; " src="@item.Image" alt="blog">
+								<i class="fal fa-search-plus"></i>
+							</a>
+							<ul class="blog-category-2">
+								<li><a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">@item.PostCategory.Name</a></li>
+							</ul>
+						</div>
+						<div class="blog-content text-center">
+							<h4 class="title"><a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h4>
+							<ul class="blog-meta">
+								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#"><i class="fal fa-clock"></i> @item.CreatedAt</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			}
+
+		</div>
+	</div>
+</section>
+
+<!--====== News Ends ======-->
+
+<!--====== Features Start ======-->
+
+<section class="features-area pt- pb-30">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3 col-sm-6">
+				<div class="single-feature text-center mt-30">
+					<i class="fal fa-truck-container"></i>
+					<h5 class="title">Free Delivery</h5>
+					<p>In convallis nulla et magna congue</p>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6">
+				<div class="single-feature text-center mt-30">
+					<i class="fal fa-life-ring"></i>
+					<h5 class="title">Expert Support</h5>
+					<p>In convallis nulla et magna congue</p>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6">
+				<div class="single-feature text-center mt-30">
+					<i class="fal fa-gift"></i>
+					<h5 class="title">10% Discount</h5>
+					<p>In convallis nulla et magna congue</p>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6">
+				<div class="single-feature text-center mt-30">
+					<i class="fal fa-user-friends"></i>
+					<h5 class="title">Buyer Protection</h5>
+					<p>In convallis nulla et magna congue</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--====== Features Ends ======-->

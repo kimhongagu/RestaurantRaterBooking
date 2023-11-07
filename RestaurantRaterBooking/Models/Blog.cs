@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestaurantRaterBooking.Models
 {
@@ -22,6 +23,7 @@ namespace RestaurantRaterBooking.Models
 
         public bool IsHot { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime? CreatedAt { get; set; }
 
         public string? CreatedBy { get; set; }

@@ -1,0 +1,328 @@
+﻿@model RestaurantRaterBooking.Models.Restaurant
+
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var relatedRestaurant = ViewData["RelatedRestaurant"] as List<Restaurant>;
+	var restaurantRelatedImage = ViewData["RelatedRestaurantImages"] as Dictionary<Guid, string>;
+	var restaurantImage = ViewData["RestaurantImage"] as string;
+	string path = restaurantImage.Replace("\\", "/");
+
+	var menuImage = ViewData["MenuImage"] as string;
+	var imageJsonArray = Model.Images.Where(t => t.ImageType == ImageType.RestaurantImage).Select(image => new { src = image.ImagePath, w = 600, h = 743 }).ToArray();
+	var MenuImageJsonArray = Model.Images.Where(t => t.ImageType == ImageType.MenuImage).Select(image => new { src = image.ImagePath, w = 600, h = 743 }).ToArray();
+}
+
+<style>
+	.page-banner::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(255, 255, 255, 0.5);
+		z-index: 0;
+	}
+
+	.page-banner-content, breadcrumb {
+		position: relative;
+		z-index: 1;
+	}
+</style>
+
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(/@Url.Content(path));">
+	<div class="container">
+		<div class="page-banner-content text-center">
+			<h2 class="title">@Model.Name</h2>
+			<ol class="breadcrumb justify-content-center">
+				<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+				<li class="breadcrumb-item"><a href="shop-sidebar.html">Restaurant</a></li>
+				<li class="breadcrumb-item"><a href="shop-sidebar.html">@Model.Category.Name</a></li>
+				<li class="breadcrumb-item active">@Model.Name</li>
+			</ol>
+		</div>
+	</div>
+</section>
+
+<!--====== Page Banner Ends ======-->
+<!--====== Product Simple Start ======-->
+
+<section class="product-simple-area pt-20">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="product-simple-image flex-wrap mt-50">
+					<button class="product-gallery-popup" data-hint="Click to enlarge" data-images='@Json.Serialize(imageJsonArray)'>
+						<i class="far fa-search-plus"></i>
+					</button>
+
+					<div class="product-simple-preview-image">
+						<img style="height: 257px; object-fit: cover; object-position: center; " class="product-zoom" src="/@restaurantImage" alt="">
+					</div>
+					<div id="gallery_01" class="product-simple-thumb-image">
+						@foreach (var item in imageJsonArray)
+						{
+							<div class="single-product-thumb">
+								<a class="active" href="#" data-image="/@item.src.Replace("\\","/")">
+									<img style="height: 53px; object-fit: cover; object-position: center;" src="/@item.src.Replace("\\","/")" alt="">
+								</a>
+							</div>
+						}
+					</div>
+
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="product-simple-details mt-50">
+					<h4 class="title">@Model.Name</h4>
+					<p class="sku-id">@Model.Address</p>
+
+					<p class="review">
+						<i class="fas fa-star review-on"></i>
+						<i class="fas fa-star review-on"></i>
+						<i class="fas fa-star review-on"></i>
+						<i class="fas fa-star review-on"></i>
+						<i class="fas fa-star review-on"></i>
+						<a href="#">(3 customer reviews)</a>
+					</p>
+
+					<div class="product-quantity-cart-wishlist-compare flex-wrap">
+						<form action="#">
+							<div class="product-cart">
+								<button class="main-btn">Book a table</button>
+							</div>
+						</form>
+						<a href="#" data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Wishlist" class="product-wishlist"><i class="far fa-heart"></i></a>
+					</div>
+
+					<div class="product-description">
+						<p>Ưu đãi: @Model.Offer</p>
+						<p>Đặc trưng: @Model.SpecialFeature </p>
+						<p>Không gian: @Model.Space </p>
+						<p>Chỗ đỗ xe: @Model.ParkingSpace</p>
+					</div>
+
+					<div class="product-meta">
+						<p>Categories: <a href="">@Model.Category.Name</a></p>
+						<p>
+							Tags:
+							@foreach (var item in Model.RestaurantTags)
+							{
+								<span class="badge bg-secondary text-white" href="#">@item.Tag.Name</span>
+							}
+						</p>
+					</div>
+
+					<div class="product-share">
+						<ul class="social">
+							<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+							<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+							<li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+							<li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6"></div>
+			<div class="col-lg-6">
+				<div class="product-simple-image product-simple-02-image flex-wrap mt-50">
+					<button class="product-gallery-popup" data-hint="Click to enlarge" data-images='@Json.Serialize(MenuImageJsonArray)'>
+						<i class="far fa-search-plus"></i>
+					</button>
+					<div class="product-simple-preview-image">
+						<img class="product-zoom-2" src="/@menuImage" alt="">
+					</div>
+					<div id="gallery_02" class="product-simple-thumb-image mr-2">
+						@foreach (var item in MenuImageJsonArray)
+						{
+							<div class="single-product-thumb">
+								<a class="active" href="#" data-image="/@item.src.Replace("\\","/")">
+									<img style="width: 87px; height: 107px; object-fit: cover; object-position: center;" src="/@item.src.Replace("\\","/")" alt="">
+								</a>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+
+<!--====== Product Simple Ends ======-->
+<!--====== Product Description & Review Start ======-->
+
+<section class="product-description-review pt-150">
+	<div class="container">
+		<div class="product-simple-tab-menu">
+			<ul class="nav justify-content-center">
+				<li><a class="active" data-bs-toggle="tab" href="#description">Description</a></li>
+				<li><a data-bs-toggle="tab" href="#review">Review (3)</a></li>
+			</ul>
+		</div>
+		<div class="tab-content pt-30">
+			<div class="tab-pane fade show active" id="description">
+				@Html.Raw(Model.Description)
+			</div>
+			<div class="tab-pane fade" id="review">
+				<div class="row justify-content-center">
+					<div class="col-lg-8">
+						<div class="product-review pt-20">
+							<div class="review-comment">
+								<ul class="comment">
+									<li>
+										<div class="single-review-comment">
+											<div class="review-author">
+												<img src="/assets/images/auhtor-1.jpg" alt="">
+											</div>
+											<div class="review-content">
+												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
+												<div class="review-name-rating">
+													<h6 class="review-name">Rosie Silva</h6>
+													<ul class="review-rating">
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="single-review-comment">
+											<div class="review-author">
+												<img src="/assets/images/auhtor-2.png" alt="">
+											</div>
+											<div class="review-content">
+												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
+												<div class="review-name-rating">
+													<h6 class="review-name">Rosie Silva</h6>
+													<ul class="review-rating">
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="single-review-comment">
+											<div class="review-author">
+												<img src="/assets/images/auhtor-3.png" alt="">
+											</div>
+											<div class="review-content">
+												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
+												<div class="review-name-rating">
+													<h6 class="review-name">Rosie Silva</h6>
+													<ul class="review-rating">
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+														<li class="rating-on"><i class="fas fa-star"></i></li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+							<div class="review-form mt-45">
+								<h2 class="form-title">Add a review </h2>
+
+								<form action="#">
+									<div class="rating-star">
+										<a href="javascript:void(0)" class="star-1"></a>
+										<a href="javascript:void(0)" class="star-2"></a>
+										<a href="javascript:void(0)" class="star-3"></a>
+										<a href="javascript:void(0)" class="star-4"></a>
+										<a href="javascript:void(0)" class="star-5"></a>
+									</div>
+									<div class="review-textarea">
+										<label>Your Review *</label>
+										<textarea></textarea>
+									</div>
+									<div class="review-btn">
+										<a href="#" class="main-btn">Submit</a>
+									</div>
+									<div class="review-checkbok">
+										<input type="checkbox" id="checkbox">
+										<label for="checkbox"><span></span> NOTIFY ME OF NEW POSTS BY EMAIL.</label>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--====== Product Description & Review Ends ======-->
+<!--====== Related Products Start ======-->
+
+<section class="product-area pt-160 pb-145">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-10">
+				<div class="section-title text-center">
+					<h2 class="title">Related Products</h2>
+				</div>
+			</div>
+		</div>
+		@* 268 *@
+		<div class="row-wrapper product-active">
+			@foreach (var item in relatedRestaurant)
+			{
+				<div class="custom-col">
+					<div class="single-product mt-50">
+						<div class="product-image">
+							<div class="image">
+								<img style="height: 268px; object-fit: cover; object-position: center; " class="product-1" src="/@restaurantRelatedImage[item.Id]" alt="product">
+								@* <img class="product-2" src="/assets/images/product/product-8.jpg" alt="product"> *@
+								<a class="link" href="product-simple-01.html"></a>
+							</div>
+							<ul class="product-meta text-center">
+								<li><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@item.Id"><i class="fal fa-search-plus"></i></a></li>
+							</ul>
+						</div>
+						<div class="product-content d-flex justify-content-between">
+							<div class="product-title">
+								<h4 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</section>
+
+<!--====== Related Products Ends ======-->
+<script>
+	$(".product-zoom-2").elevateZoom({
+		gallery: 'gallery_02',
+		cursor: "crosshair",
+		galleryActiveClass: 'active',
+		easing: true,
+		imageCrossfade: true,
+		zoomType: "inner"
+	});
+
+	//pass the images to Fancybox
+	$(".product-zoom-2").bind("click", function (e) {
+		var ez = $('.product-zoom-2').data('elevateZoom');
+		$.fancybox(ez.getGalleryList());
+		return false;
+	});
+</script>

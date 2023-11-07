@@ -101,6 +101,7 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
                         BlogId = blog.Id,
                         TagId = tagId
                     };
+                    _context.Add(blogTag);
                 }
                 blog.CreatedAt = DateTime.Now;
                 blog.EditedAt = DateTime.Now;

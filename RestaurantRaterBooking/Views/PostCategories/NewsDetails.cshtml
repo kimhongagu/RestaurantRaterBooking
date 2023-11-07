@@ -1,0 +1,160 @@
+﻿@model RestaurantRaterBooking.Models.PostCategory
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var categories = ViewData["Categories"] as List<PostCategory>;
+    var tags = ViewData["Tags"] as List<Tag>;
+    var news = ViewData["News"] as IPagedList<News>;
+}
+
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(/assets/images/page-banner-4.jpg);">
+    <div class="container">
+        <div class="page-banner-content text-center">
+            <h2 class="title">Blog Sidebar</h2>
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">@Model.Name</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<!--====== Page Banner Ends ======-->
+<!--====== Blog Start ======-->
+
+<section class="blog-page pt-20 pb-120">
+    <div class="container">
+        <div class="row justify-content-between flex-lg-row-reverse">
+            <div class="col-lg-8">
+                @foreach (var item in news)
+                {
+                    <div class="single-blog mt-80">
+                        <div class="blog-image">
+                            <a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">
+                                <img style="height: 318px; object-fit: cover; object-position: center; " src="@item.Image" alt="blog">
+                                <i class="fal fa-search-plus"></i>
+                            </a>
+                        </div>
+                        <div class="blog-content">
+                            <ul class="blog-category">
+                                <li><a href="#">@item.PostCategory.Name</a></li>
+                            </ul>
+                            <h4 class="title"><a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h4>
+                            <ul class="blog-meta">
+                                <li><a href="#">By <span> Jon Smith</span></a></li>
+                                <li><a href="#"><i class="fal fa-clock"></i> @item.CreatedAt</a></li>
+                            </ul>
+                            <p>@item.ShortContent</p>
+
+                            <a asp-controller="News" asp-action="Details" asp-route-id="@item.Id" class="main-btn">Read More</a>
+
+                            <div class="share-post">
+                                <a href="#" class="share">
+                                    <i class="fas fa-share-alt"></i> Share post
+                                </a>
+                                <ul class="social">
+                                    <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                    <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
+                                    <li><a class="linkedin" href="#"><i class="fab fa-linkedin"></i></a></li>
+                                    <li><a class="pinterest" href="#"><i class="fab fa-pinterest-p"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="pagination-items mt-45">
+                    <ul class="pagination justify-content-center">
+                        <li><a class="prev" href="@Url.Action("NewsDetails", new { id = Model.Id, page = (news.PageNumber - 1) })">Previous</a></li>
+
+                        @for (int i = 1; i <= news.PageCount; i++)
+                        {
+                            <li><a class="@(i == news.PageNumber ? "active" : "")" href="@Url.Action("NewsDetails", new { id = Model.Id, page = i })">@i</a></li>
+                        }
+
+                        <li><a class="next" href="@Url.Action("NewsDetails", new { id = Model.Id, page = (news.PageNumber + 1) })">Next</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="col-lg-3">
+                <div class="blog-sidebar">
+                    <div class="blog-sidebar-search mt-80">
+                        <div class="sidebar-search-form">
+                            <form asp-controller="PostCategories" asp-action="SearchNews" method="get">
+                                <input type="text" name="query" placeholder="Search entire store…">
+                                <button type="submit"><i class="far fa-search"></i></button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="blog-sidebar-category mt-50">
+                        <h4 class="sidebar-title">Categories</h4>
+
+                        <div class="sidebar-category">
+                            <ul class="category-list">
+                                @foreach (var item in categories)
+                                {
+                                    <li><a asp-controller="PostCategories" asp-action="NewsDetails" asp-route-id="@item.Id">@item.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="blog-sidebar-post mt-50">
+                        <h4 class="sidebar-title">Popular Post</h4>
+
+                        <div class="sidebar-post">
+                            <div class="single-post">
+                                <div class="post-thumb">
+                                    <a href="blog-details.html"><img src="assets/images/blog/blog-1-4.jpg" alt=""></a>
+                                </div>
+                                <div class="post-content">
+                                    <h6 class="title"><a href="blog-details.html">Fashion Hipster</a></h6>
+                                    <span class="date"><a href="#">November 22, 2017</a></span>
+                                </div>
+                            </div>
+                            <div class="single-post">
+                                <div class="post-thumb">
+                                    <a href="blog-details.html"><img src="assets/images/blog/blog-1-2.jpg" alt=""></a>
+                                </div>
+                                <div class="post-content">
+                                    <h6 class="title"><a href="blog-details.html">Milano Fashion</a></h6>
+                                    <span class="date"><a href="#">November 22, 2017</a></span>
+                                </div>
+                            </div>
+                            <div class="single-post">
+                                <div class="post-thumb">
+                                    <a href="blog-details.html"><img src="assets/images/blog/blog-1-5.jpg" alt=""></a>
+                                </div>
+                                <div class="post-content">
+                                    <h6 class="title"><a href="blog-details.html">Pink Bird</a></h6>
+                                    <span class="date"><a href="#">November 22, 2017</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="blog-sidebar-tags mt-50">
+                        <h4 class="sidebar-title">Tags</h4>
+                        <div class="sidebar-tags">
+                            <ul class="tags-list">
+                                @foreach (var tag in tags)
+                                {
+                                    <li><a asp-controller="Tags" asp-action="NewsByTag" asp-route-id="@tag.Id">@tag.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!--====== Blog Ends ======-->
