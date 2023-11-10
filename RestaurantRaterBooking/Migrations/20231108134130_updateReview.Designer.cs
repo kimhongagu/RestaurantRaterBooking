@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantRaterBooking.Models;
 
@@ -11,9 +12,11 @@ using RestaurantRaterBooking.Models;
 namespace RestaurantRaterBooking.Migrations
 {
     [DbContext(typeof(Models.AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20231108134130_updateReview")]
+    partial class updateReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -646,6 +649,9 @@ namespace RestaurantRaterBooking.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -663,13 +669,13 @@ namespace RestaurantRaterBooking.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RestaurantID");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("RestaurantID");
 
                     b.ToTable("Review");
                 });
@@ -887,17 +893,17 @@ namespace RestaurantRaterBooking.Migrations
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Review", b =>
                 {
+                    b.HasOne("RestaurantRaterBooking.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Review")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("RestaurantRaterBooking.Models.Restaurant", "Restaurant")
                         .WithMany("Reviews")
                         .HasForeignKey("RestaurantID");
 
-                    b.HasOne("RestaurantRaterBooking.Models.ApplicationUser", "User")
-                        .WithMany("Review")
-                        .HasForeignKey("UserID");
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Restaurant");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Slider", b =>

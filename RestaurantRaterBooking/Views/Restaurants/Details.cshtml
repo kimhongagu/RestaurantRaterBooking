@@ -7,10 +7,11 @@
 	var restaurantRelatedImage = ViewData["RelatedRestaurantImages"] as Dictionary<Guid, string>;
 	var restaurantImage = ViewData["RestaurantImage"] as string;
 	string path = restaurantImage.Replace("\\", "/");
-
 	var menuImage = ViewData["MenuImage"] as string;
 	var imageJsonArray = Model.Images.Where(t => t.ImageType == ImageType.RestaurantImage).Select(image => new { src = image.ImagePath, w = 600, h = 743 }).ToArray();
 	var MenuImageJsonArray = Model.Images.Where(t => t.ImageType == ImageType.MenuImage).Select(image => new { src = image.ImagePath, w = 600, h = 743 }).ToArray();
+
+	var reviews = ViewData["Reviews"] as List<Review>;
 }
 
 <style>
@@ -161,7 +162,7 @@
 		<div class="product-simple-tab-menu">
 			<ul class="nav justify-content-center">
 				<li><a class="active" data-bs-toggle="tab" href="#description">Description</a></li>
-				<li><a data-bs-toggle="tab" href="#review">Review (3)</a></li>
+				<li><a data-bs-toggle="tab" href="#review">Review</a></li>
 			</ul>
 		</div>
 		<div class="tab-content pt-30">
@@ -174,89 +175,66 @@
 						<div class="product-review pt-20">
 							<div class="review-comment">
 								<ul class="comment">
-									<li>
-										<div class="single-review-comment">
-											<div class="review-author">
-												<img src="/assets/images/auhtor-1.jpg" alt="">
-											</div>
-											<div class="review-content">
-												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
-												<div class="review-name-rating">
-													<h6 class="review-name">Rosie Silva</h6>
-													<ul class="review-rating">
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-													</ul>
+									@foreach (var item in reviews)
+									{
+										<li>
+											<div class="single-review-comment">
+												<div class="review-author">
+													<img src="/assets/images/auhtor-1.jpg" alt="">
+												</div>
+												<div class="review-content">
+													<div class="review-name-rating mt-0">
+														<div class="col">
+															<h6 class="review-name">@item.User?.UserName</h6>
+															<ul class="review-rating">
+																@for (int i = 1; i <= 5; i++)
+																{
+																	<li class="@(i <= item.Rating ? "rating-on" : "rating-off")">
+																		<i class="fas fa-star"></i>
+																	</li>
+																}
+															</ul>
+														</div>
+														<p class="review-created-at">@item.CreatedAt.ToString("dd/MM/yyyy")</p>
+													</div>
+													<p style="white-space: pre-line;">"@item.Comment"</p>
 												</div>
 											</div>
-										</div>
-									</li>
-									<li>
-										<div class="single-review-comment">
-											<div class="review-author">
-												<img src="/assets/images/auhtor-2.png" alt="">
-											</div>
-											<div class="review-content">
-												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
-												<div class="review-name-rating">
-													<h6 class="review-name">Rosie Silva</h6>
-													<ul class="review-rating">
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</li>
-									<li>
-										<div class="single-review-comment">
-											<div class="review-author">
-												<img src="/assets/images/auhtor-3.png" alt="">
-											</div>
-											<div class="review-content">
-												<p>“Proin bibendum dolor vitae neque ornare, vel mollis est venenatis. Orci varius natoque penatibus et magnis dis parturient montes, nascet”</p>
-												<div class="review-name-rating">
-													<h6 class="review-name">Rosie Silva</h6>
-													<ul class="review-rating">
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-														<li class="rating-on"><i class="fas fa-star"></i></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</li>
+										</li>
+									}
 								</ul>
 							</div>
 							<div class="review-form mt-45">
 								<h2 class="form-title">Add a review </h2>
-
-								<form action="#">
+								<form asp-controller="Restaurants" asp-action="CreateReview" method="post">
+									<input type="hidden" name="restaurantId" value="@Model.Id" />
 									<div class="rating-star">
-										<a href="javascript:void(0)" class="star-1"></a>
-										<a href="javascript:void(0)" class="star-2"></a>
-										<a href="javascript:void(0)" class="star-3"></a>
-										<a href="javascript:void(0)" class="star-4"></a>
-										<a href="javascript:void(0)" class="star-5"></a>
+										<div id="rating">
+											<input type="radio" id="star5" name="rating" value="5" />
+											<label class="full" for="star5" title="Awesome - 5 stars"></label>
+
+											<input type="radio" id="star4" name="rating" value="4" />
+											<label class="full" for="star4" title="Pretty good - 4 stars"></label>
+
+
+											<input type="radio" id="star3" name="rating" value="3" />
+											<label class="full" for="star3" title="Meh - 3 stars"></label>
+
+											<input type="radio" id="star2" name="rating" value="2" />
+											<label class="full" for="star2" title="Kinda bad - 2 stars"></label>
+
+											<input type="radio" id="star1" name="rating" value="1" />
+											<label class="full" for="star1" title="Sucks big time - 1 star"></label>
+										</div>
+										@* <input type="hidden" id="rating-input" name="rating" value="0"> *@
 									</div>
+
 									<div class="review-textarea">
-										<label>Your Review *</label>
-										<textarea></textarea>
+										<textarea id="comment" name="comment"></textarea>
 									</div>
+
 									<div class="review-btn">
-										<a href="#" class="main-btn">Submit</a>
-									</div>
-									<div class="review-checkbok">
-										<input type="checkbox" id="checkbox">
-										<label for="checkbox"><span></span> NOTIFY ME OF NEW POSTS BY EMAIL.</label>
+										<button type="submit" class="main-btn">Submit</button>
 									</div>
 								</form>
 							</div>
@@ -280,7 +258,6 @@
 				</div>
 			</div>
 		</div>
-		@* 268 *@
 		<div class="row-wrapper product-active">
 			@foreach (var item in relatedRestaurant)
 			{
@@ -325,4 +302,15 @@
 		$.fancybox(ez.getGalleryList());
 		return false;
 	});
+
+	function calcRate(r) {
+		const f = ~~r,//Tương tự Math.floor(r)
+			id = 'star' + f + (r % f ? 'half' : '')
+		id && (document.getElementById(id).checked = !0)
+	}
 </script>
+
+<section>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
+	<link href="~/css/rating.css" rel="stylesheet" />
+</section>
