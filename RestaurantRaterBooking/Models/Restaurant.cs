@@ -47,8 +47,10 @@ namespace RestaurantRaterBooking.Models
         public bool Karaoke { get; set; }
         public bool Projector { get; set; }
         public bool EnventDecoration { get; set; }
+        [NotMapped]
+		public double AverageRating { get; set; }
 
-        public Guid? CityID { get; set; }
+		public Guid? CityID { get; set; }
         public virtual City? City { get; set; } 
 
         public Guid CategoryID { get; set; }

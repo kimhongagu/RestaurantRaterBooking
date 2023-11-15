@@ -59,4 +59,6 @@ public class AppContext : IdentityDbContext<ApplicationUser>
     public DbSet<RestaurantRaterBooking.Models.BlogTag> BlogTag { get; set; } = default!;
 
     public DbSet<RestaurantRaterBooking.Models.Review> Review { get; set; }
+
+    public DbSet<RestaurantRaterBooking.Models.Slider> Slider { get; set; } = default!;
 }

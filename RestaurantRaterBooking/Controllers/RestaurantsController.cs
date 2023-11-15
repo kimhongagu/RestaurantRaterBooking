@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RestaurantRaterBooking.Models;
+using X.PagedList;
 
 namespace RestaurantRaterBooking.Controllers
 {
@@ -126,6 +127,58 @@ namespace RestaurantRaterBooking.Controllers
 
 			// Quay lại trang chi tiết của nhà hàng hoặc trang nào đó khác
 			return RedirectToAction("Details", "Restaurants", new { id = restaurantId });
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Search(Guid categoryID, string? searchKeyword, int? page)
+		{
+			int pageSize = 4;
+			int pageNumber = (page ?? 1);
+
+			IEnumerable<Restaurant> restaurants = _context.Restaurant
+				.Include(r => r.Category)
+				.Include(r => r.City)
+				.Include(r => r.Images)
+				.Include(r => r.Reviews);
+
+			if (categoryID != Guid.Empty)
+			{
+				restaurants = restaurants.Where(r => r.CategoryID == categoryID);
+			}
+
+			if (!string.IsNullOrEmpty(searchKeyword))
+			{
+				restaurants = restaurants.Where(r => r.Name.Contains(searchKeyword));
+			}
+
+			ViewData["RestaurantImages"] = restaurants.ToDictionary(
+				r => r.Id,
+				r => r.Images.FirstOrDefault(i => i.ImageType == ImageType.RestaurantImage)?.ImagePath
+			);
+
+			ViewData["Restaurants"] = restaurants.ToPagedList(pageNumber, pageSize);
+
+			ViewData["Blogs"] = _context.Blog.Include(b => b.PostCategory)
+						.OrderByDescending(b => b.CreatedAt)
+						.Take(2)
+						.ToList();
+			ViewData["News"] = _context.News.Include(n => n.PostCategory)
+								.OrderByDescending(b => b.CreatedAt)
+								.Take(2)
+								.ToList();
+			ViewData["Categories"] = _context.Category.ToList();
+
+			ViewData["Sliders"] = _context.Slider.ToList();
+
+			foreach (var restaurant in restaurants)
+			{
+				double averageRating = restaurant.Reviews.Any() ? restaurant.Reviews.Average(r => r.Rating) : 0;
+
+				// Làm tròn đến 1 chữ số sau dấu phẩy
+				restaurant.AverageRating = Math.Round(averageRating, 1);
+			}
+
+			return View();
 		}
 
 		private bool RestaurantExists(Guid id)

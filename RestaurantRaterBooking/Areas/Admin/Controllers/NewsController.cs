@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using RestaurantRaterBooking.Models;
+using X.PagedList;
 
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
@@ -23,11 +24,21 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
         }
 
         // GET: Admin/News
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchText, int? page)
         {
-            var appContext = _context.News.Include(n => n.PostCategory);
-            return View(await appContext.ToListAsync());
-        }
+			int pageSize = 5;
+			int pageNumber = page ?? 1;
+
+			IEnumerable<News> appContext = _context.News.Include(n => n.PostCategory);
+
+			if (!string.IsNullOrEmpty(searchText))
+			{
+				appContext = appContext.Where(x => x.Title.Contains(searchText));
+			}
+
+			var pagedListNews = await appContext.ToPagedListAsync(pageNumber, pageSize);
+			return View(pagedListNews);
+		}
 
         // GET: Admin/News/Details/5
         public async Task<IActionResult> Details(Guid? id)

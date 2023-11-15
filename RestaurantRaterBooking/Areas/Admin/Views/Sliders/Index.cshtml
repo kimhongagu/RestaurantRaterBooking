@@ -1,0 +1,108 @@
+﻿@model IEnumerable<RestaurantRaterBooking.Models.Slider>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alias)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 1;
+        }
+@foreach (var item in Model) {
+        <tr>
+            <th>@i</th>
+            <td>
+               <img src="@item.Image" height="100" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Alias)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City.Name)
+            </td>
+            <td>
+                <a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+				<a class="btn btn-outline-danger deleteButton" href="#" data-toggle="modal" data-target="#deleteConfirmationModal" data-id="@item.Id">Delete</a>
+            </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteConfirmationModalLabel">Xác nhận xóa</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Bạn có chắc chắn muốn xóa slider này không?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+				<button type="button" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	var sliderIdToDelete;
+
+	$(document).ready(function () {
+		// Hiển thị modal xóa nhà hàng
+		$('.deleteButton').click(function () {
+			sliderIdToDelete = $(this).data('id');
+			$('#deleteConfirmationModal').modal('show');
+		});
+
+		// Xóa slider khi nhấn nút "Xóa" trên modal
+		$('#confirmDeleteButton').click(function () {
+			var url = '/Admin/Sliders/Delete/' + sliderIdToDelete;
+
+			$.ajax({
+				type: "POST",
+				url: url,
+				headers: {
+					RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+				},
+				success: function (data) {
+					// Xử lý khi xóa thành công
+					alert("Đã xóa thành công");
+					location.reload();
+				},
+				error: function (data) {
+					// Xử lý khi xóa thất bại
+					alert("Xóa thất bại");
+				}
+			});
+		});
+	});
+</script>

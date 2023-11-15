@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using RestaurantRaterBooking.Models;
+using X.PagedList;
 
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
@@ -22,35 +24,26 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 			_environment = environment;
 		}
 
-        // GET: Admin/Restaurants
-        public async Task<IActionResult> Index()
-        {
-            var appContext = _context.Restaurant.Include(r => r.Category).Include(r => r.City);
-            return View(await appContext.ToListAsync());
-        }
+		// GET: Admin/Restaurants
+		public async Task<IActionResult> Index(string searchText, int? page)
+		{
+			int pageSize = 5;
+			int pageNumber = page ?? 1;
 
-        // GET: Admin/Restaurants/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null || _context.Restaurant == null)
-            {
-                return NotFound();
-            }
+			IEnumerable<Restaurant> appContext = _context.Restaurant.Include(r => r.Category).Include(r => r.City);
 
-            var restaurant = await _context.Restaurant
-                .Include(r => r.Category)
-                .Include(r => r.City)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
+			if (!string.IsNullOrEmpty(searchText))
+			{
+				// Lọc dữ liệu dựa trên searchText
+				appContext = appContext.Where(x => x.Name.Contains(searchText));
+			}
 
-            return View(restaurant);
-        }
+			var pagedListRestaurants = await appContext.ToPagedListAsync(pageNumber, pageSize);
+			return View(pagedListRestaurants);
+		}
 
-        // GET: Admin/Restaurants/Create
-        public IActionResult Create()
+		// GET: Admin/Restaurants/Create
+		public IActionResult Create()
         {
 			ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Name");
 			ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Name");
@@ -240,27 +233,7 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
             return View(restaurant);
         }
 
-		// GET: Admin/Restaurants/Delete/5
-		//public async Task<IActionResult> Delete(Guid? id)
-		//{
-		//    if (id == null || _context.Restaurant == null)
-		//    {
-		//        return NotFound();
-		//    }
-
-		//    var restaurant = await _context.Restaurant
-		//        .Include(r => r.Category)
-		//        .Include(r => r.City)
-		//        .FirstOrDefaultAsync(m => m.Id == id);
-		//    if (restaurant == null)
-		//    {
-		//        return NotFound();
-		//    }
-
-		//    return View(restaurant);
-		//}
-
-		//POST: Admin/Restaurants/Delete/5
+		
         [HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(Guid id)

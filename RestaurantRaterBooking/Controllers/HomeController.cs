@@ -16,7 +16,7 @@ namespace RestaurantRaterBooking.Controllers
 			_logger = logger;
 			_context = context;
 		}
-        public IActionResult Index(int? page)
+		public async Task<IActionResult> Index(int? page)
 		{
             int pageSize = 4;
             int pageNumber = (page ?? 1);
@@ -24,9 +24,10 @@ namespace RestaurantRaterBooking.Controllers
             IEnumerable<Restaurant> restaurants = _context.Restaurant
                 .Include(r => r.Category)
                 .Include(r => r.City)
-                .Include(r => r.Images);
+                .Include(r => r.Images)
+                .Include(r => r.Reviews);
 
-            ViewData["RestaurantImages"] = restaurants.ToDictionary(
+			ViewData["RestaurantImages"] = restaurants.ToDictionary(
                 r => r.Id,
                 r => r.Images.FirstOrDefault(i => i.ImageType == ImageType.RestaurantImage)?.ImagePath
             );
@@ -43,7 +44,17 @@ namespace RestaurantRaterBooking.Controllers
                                 .ToList();
             ViewData["Categories"] = _context.Category.ToList();
 
-            return View();
+            ViewData["Sliders"] = _context.Slider.ToList();
+
+			foreach (var restaurant in restaurants)
+			{
+				double averageRating = restaurant.Reviews.Any() ? restaurant.Reviews.Average(r => r.Rating) : 0;
+
+				// Làm tròn đến 1 chữ số sau dấu phẩy
+				restaurant.AverageRating = Math.Round(averageRating, 1);
+			}
+
+			return View();
         }
 
         public IActionResult Contact()
