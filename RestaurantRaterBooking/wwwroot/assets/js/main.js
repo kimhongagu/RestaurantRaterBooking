@@ -991,7 +991,21 @@ $(function() {
 
     /*=====  End of product Zoom ======*/
 
-   
+    $(".product-zoom-2").elevateZoom({
+        gallery: 'gallery_02',
+        cursor: "crosshair",
+        galleryActiveClass: 'active',
+        easing: true,
+        imageCrossfade: true,
+        zoomType: "inner"
+    });
+
+    //pass the images to Fancybox
+    $(".product-zoom-2").bind("click", function (e) {
+        var ez = $('.product-zoom-2').data('elevateZoom');
+        $.fancybox(ez.getGalleryList());
+        return false;
+    });
 
 
     /*=============================================

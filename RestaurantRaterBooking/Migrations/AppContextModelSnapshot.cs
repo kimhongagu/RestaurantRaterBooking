@@ -178,6 +178,9 @@ namespace RestaurantRaterBooking.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsRestaurantAccount")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -506,6 +509,29 @@ namespace RestaurantRaterBooking.Migrations
                     b.ToTable("PostCategory");
                 });
 
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Reply", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ReplyAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplyComment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ReviewID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewID");
+
+                    b.ToTable("Reply");
+                });
+
             modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -534,9 +560,6 @@ namespace RestaurantRaterBooking.Migrations
                     b.Property<TimeSpan>("ClosingHour")
                         .HasColumnType("time");
 
-                    b.Property<bool>("Delivery")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -555,6 +578,10 @@ namespace RestaurantRaterBooking.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -586,6 +613,10 @@ namespace RestaurantRaterBooking.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Space")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecialDish")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -690,7 +721,6 @@ namespace RestaurantRaterBooking.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -847,6 +877,15 @@ namespace RestaurantRaterBooking.Migrations
                     b.Navigation("News");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("RestaurantRaterBooking.Models.Reply", b =>
+                {
+                    b.HasOne("RestaurantRaterBooking.Models.Review", "Review")
+                        .WithMany()
+                        .HasForeignKey("ReviewID");
+
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("RestaurantRaterBooking.Models.Restaurant", b =>

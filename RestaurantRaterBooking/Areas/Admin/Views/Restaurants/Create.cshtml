@@ -17,71 +17,92 @@
 		<form asp-action="Create" enctype="multipart/form-data" id="restaurantForm">
 			<div asp-validation-summary="All" class="text-danger"></div>
 			<div class="form-group">
-				<label asp-for="Name" class="control-label"></label>
+				<label asp-for="Name" class="control-label">Tên nhà hàng</label>
 				<input asp-for="Name" class="form-control" />
 				<span asp-validation-for="Name" class="text-danger"></span>
 			</div>
 
 			<div class="form-group">
-				<label asp-for="Description" class="control-label"></label>
-				<textarea asp-for="Description" class="form-control" id="txtDesciption"></textarea>
+				<label asp-for="Description" class="control-label"> Mô tả</label>
+				<textarea asp-for="Description" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="Description" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="Address" class="control-label"></label>
+				<label asp-for="Address" class="control-label">Địa chỉ</label>
 				<input asp-for="Address" class="form-control" />
 				<span asp-validation-for="Address" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="Phone" class="control-label"></label>
+				<label asp-for="Phone" class="control-label">Số điện thoại</label>
 				<input asp-for="Phone" class="form-control" />
 				<span asp-validation-for="Phone" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="Website" class="control-label"></label>
+				<label asp-for="Website" class="control-label">Website</label>
 				<input asp-for="Website" class="form-control" />
 				<span asp-validation-for="Website" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="Email" class="control-label"></label>
+				<label asp-for="Email" class="control-label">Email</label>
 				<input asp-for="Email" class="form-control" />
 				<span asp-validation-for="Email" class="text-danger"></span>
 			</div>
 			<div class="form-group">
-				<label asp-for="Offer" class="control-label"></label>
-				<input asp-for="Offer" class="form-control" />
+				<label asp-for="Offer" class="control-label">Ưu đãi</label>
+				<textarea asp-for="Offer" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="Offer" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="OpeningHour" class="control-label"></label>
+				<label asp-for="OpeningHour" class="control-label">Giờ mở cửa</label>
 				<input asp-for="OpeningHour" class="form-control" type="time" step="1800" />
 				<span asp-validation-for="OpeningHour" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="ClosingHour" class="control-label"></label>
+				<label asp-for="ClosingHour" class="control-label">Giờ đóng cửa</label>
 				<input asp-for="ClosingHour" class="form-control" type="time" step="1800" />
 				<span asp-validation-for="ClosingHour" class="text-danger"></span>
 			</div>
 
 			<div class="form-group">
-				<label asp-for="SuitableFor" class="control-label"></label>
-				<input asp-for="SuitableFor" class="form-control" />
+				<label asp-for="SuitableFor" class="control-label">Phù hợp</label>
+				<textarea asp-for="SuitableFor" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="SuitableFor" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="SpecialFeature" class="control-label"></label>
-				<input asp-for="SpecialFeature" class="form-control" />
+				<label asp-for="SpecialDish" class="control-label">Món đặc sắc</label>
+				<textarea asp-for="SpecialDish" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="SpecialDish" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="SpecialFeature" class="control-label">Điểm đặc trưng</label>
+				<textarea asp-for="SpecialFeature" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="SpecialFeature" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="Space" class="control-label"></label>
-				<input asp-for="Space" class="form-control" />
+				<label asp-for="Space" class="control-label">Không gian</label>
+				<textarea asp-for="Space" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="Space" class="text-danger"></span>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="ParkingSpace" class="control-label"></label>
-				<input asp-for="ParkingSpace" class="form-control" />
+				<label asp-for="ParkingSpace" class="control-label">Chỗ đỗ xe</label>
+				<textarea asp-for="ParkingSpace" class="form-control ckeditor"></textarea>
 				<span asp-validation-for="ParkingSpace" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Note" class="control-label">Lưu ý</label>
+				<textarea asp-for="Note" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="Note" class="text-danger"></span>
 			</div>
 
 			<div class="row">
@@ -167,20 +188,10 @@
 				<div class="col-4">
 					<div class="form-group form-check">
 						<label class="form-check-label">
-							<input class="form-check-input" asp-for="Delivery" /> @Html.DisplayNameFor(model => model.Delivery)
-						</label>
-					</div>
-				</div>
-				<div class="col-4">
-					<div class="form-group form-check">
-						<label class="form-check-label">
 							<input class="form-check-input" asp-for="Karaoke" /> @Html.DisplayNameFor(model => model.Karaoke)
 						</label>
 					</div>
 				</div>
-			</div>
-
-			<div class="row">
 				<div class="col-4">
 					<div class="form-group form-check">
 						<label class="form-check-label">
@@ -188,6 +199,10 @@
 						</label>
 					</div>
 				</div>
+			</div>
+
+			<div class="row">
+				
 				<div class="col-4">
 					<div class="form-group form-check">
 						<label class="form-check-label">
@@ -199,22 +214,23 @@
 			</div>
 
 			<div class="form-group">
-				<label asp-for="CityID" class="control-label"></label>
+				<label asp-for="CityID" class="control-label">Thành phố</label>
 				<select asp-for="CityID" class="form-control" asp-items="ViewBag.CityID"></select>
 			</div>
+
 			<div class="form-group">
-				<label asp-for="CategoryID" class="control-label"></label>
+				<label asp-for="CategoryID" class="control-label">Danh mục</label>
 				<select asp-for="CategoryID" class="form-control" asp-items="ViewBag.CategoryID"></select>
 			</div>
 
 			<div class="form-group">
-				<label for="restaurantImages">Restaurant Images:</label>
+				<label for="restaurantImages">Các hình ảnh về nhà hàng:</label>
 				<input type="file" id="restaurantImages" name="restaurantImages" class="form-control" multiple onchange="previewImages('restaurantImages', 'restaurantImageList', restaurantFileList)" />
 			</div>
 			<output id="restaurantImageList"></output>
 
 			<div class="form-group">
-				<label for="menuImages">Menu Images:</label>
+				<label for="menuImages">Ảnh menu:</label>
 				<input type="file" id="menuImages" name="menuImages" class="form-control" multiple onchange="previewImages('menuImages', 'menuImageList', menuFileList)" />
 			</div>
 			<output id="menuImageList"></output>
@@ -372,9 +388,11 @@
 
 	<script>
 		$(document).ready(function () {
-			CKEDITOR.replace('txtDesciption', {
-				customConfig: '~/ckeditor/config.js',
-				extraAllowedContent: 'span',
+			$('.ckeditor').each(function () {
+				CKEDITOR.replace($(this).attr('id'), {
+					customConfig: '~/ckeditor/config.js',
+					extraAllowedContent: 'span',
+				});
 			});
 		});
 	</script>

@@ -93,7 +93,21 @@ namespace RestaurantRaterBooking.Controllers
 			// Thêm danh sách đánh giá vào ViewData
 			ViewData["Reviews"] = reviews;
 
-			return View(restaurant);
+            //lấy danh sách các reply
+            var replyDictionary = new Dictionary<Guid, List<Reply>>();
+
+            foreach (var review in reviews)
+            {
+                var replies = await _context.Reply
+                    .Where(r => r.ReviewID == review.Id)
+                    .ToListAsync();
+
+                replyDictionary.Add(review.Id, replies);
+            }
+
+            ViewData["Replies"] = replyDictionary;
+
+            return View(restaurant);
 		}
 
 

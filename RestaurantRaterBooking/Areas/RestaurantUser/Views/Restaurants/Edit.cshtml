@@ -1,0 +1,415 @@
+﻿@model RestaurantRaterBooking.Models.Restaurant
+
+@{
+	ViewData["Title"] = "Edit";
+	var tags = ViewData["Tags"] as List<Tag>;
+	int totalTags = tags.Count;
+	int baseTagsPerColumn = totalTags / 4;
+	int remainder = totalTags % 4;
+	Layout = "~/Areas/RestaurantUser/Views/Shared/_Layout.cshtml";
+
+	var currentTags = ViewData["CurrentTags"] as List<Guid>; // danh sách ID của tags hiện tại
+	var currentRestaurantImages = ViewData["CurrentRestaurantImages"]; // danh sách URL của hình ảnh nhà hàng hiện tại
+	var currentMenuImages = ViewData["CurrentMenuImages"]; // danh sách URL của hình ảnh menu hiện tại
+}
+
+<h1>Edit</h1>
+
+<h4>Restaurant</h4>
+<hr />
+<div class="row ml-2 mr-2">
+	<div class="col-md-12">
+		<form asp-action="Edit" enctype="multipart/form-data" id="restaurantForm">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<input type="hidden" asp-for="Id" />
+			<div class="form-group">
+				<label asp-for="Name" class="control-label">Tên nhà hàng</label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Description" class="control-label"> Mô tả</label>
+				<textarea asp-for="Description" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Address" class="control-label">Địa chỉ</label>
+				<input asp-for="Address" class="form-control" />
+				<span asp-validation-for="Address" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Phone" class="control-label">Số điện thoại</label>
+				<input asp-for="Phone" class="form-control" />
+				<span asp-validation-for="Phone" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Website" class="control-label">Website</label>
+				<input asp-for="Website" class="form-control" />
+				<span asp-validation-for="Website" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Email" class="control-label">Email</label>
+				<input asp-for="Email" class="form-control" />
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Offer" class="control-label">Ưu đãi</label>
+				<textarea asp-for="Offer" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="Offer" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="OpeningHour" class="control-label">Giờ mở cửa</label>
+				<input asp-for="OpeningHour" class="form-control" type="time" step="1800" />
+				<span asp-validation-for="OpeningHour" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="ClosingHour" class="control-label">Giờ đóng cửa</label>
+				<input asp-for="ClosingHour" class="form-control" type="time" step="1800" />
+				<span asp-validation-for="ClosingHour" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="SuitableFor" class="control-label">Phù hợp</label>
+				<textarea asp-for="SuitableFor" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="SuitableFor" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="SpecialDish" class="control-label">Món đặc sắc</label>
+				<textarea asp-for="SpecialDish" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="SpecialDish" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="SpecialFeature" class="control-label">Điểm đặc trưng</label>
+				<textarea asp-for="SpecialFeature" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="SpecialFeature" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Space" class="control-label">Không gian</label>
+				<textarea asp-for="Space" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="Space" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="ParkingSpace" class="control-label">Chỗ đỗ xe</label>
+				<textarea asp-for="ParkingSpace" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="ParkingSpace" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Note" class="control-label">Lưu ý</label>
+				<textarea asp-for="Note" class="form-control ckeditor"></textarea>
+				<span asp-validation-for="Note" class="text-danger"></span>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="ChildrenChair" /> @Html.DisplayNameFor(model => model.ChildrenChair)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="Wifi" /> @Html.DisplayNameFor(model => model.Wifi)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="AirConditioning" /> @Html.DisplayNameFor(model => model.AirConditioning)
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="VisaMasterCard" /> @Html.DisplayNameFor(model => model.VisaMasterCard)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="VATInvoice" /> @Html.DisplayNameFor(model => model.VATInvoice)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="PrivateRoom" /> @Html.DisplayNameFor(model => model.PrivateRoom)
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="OutdoorTable" /> @Html.DisplayNameFor(model => model.OutdoorTable)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="ChildrenPlayArea" /> @Html.DisplayNameFor(model => model.ChildrenPlayArea)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="SmokiingArea" /> @Html.DisplayNameFor(model => model.SmokiingArea)
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="DirectBill" /> @Html.DisplayNameFor(model => model.DirectBill)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="Karaoke" /> @Html.DisplayNameFor(model => model.Karaoke)
+						</label>
+					</div>
+				</div>
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="Projector" /> @Html.DisplayNameFor(model => model.Projector)
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+
+				<div class="col-4">
+					<div class="form-group form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" asp-for="EnventDecoration" /> @Html.DisplayNameFor(model => model.EnventDecoration)
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label asp-for="CityID" class="control-label">Thành phố</label>
+				<select asp-for="CityID" class="form-control" asp-items="ViewBag.CityID"></select>
+				<span asp-validation-for="CityID" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="CategoryID" class="control-label">Danh mục</label>
+				<select asp-for="CategoryID" class="form-control" asp-items="ViewBag.CategoryID"></select>
+				<span asp-validation-for="CategoryID" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label for="restaurantImages">Restaurant Images:</label>
+				<input type="file" id="restaurantImages" name="restaurantImages" class="form-control" multiple onchange="handleFiles('restaurantImages', 'restaurantImageList', restaurantImgList)" />
+			</div>
+			<output id="restaurantImageList">
+				@foreach (var imageUrl in ViewData["CurrentRestaurantImages"] as List<string>)
+				{
+					<div style="display: inline-block; position: relative;">
+						<img src="~/@imageUrl" style="width: 150px; margin: 10px;" />
+						<button type="button" style="position: absolute; top: 0; right: 0; border-radius: 50%; background-color: rgba(255, 255, 255, 0.7); color: red; border: none; padding: 2px 5px;" onclick="removeImage(this, '@imageUrl', restaurantImgList)">
+							X
+						</button>
+					</div>
+				}
+			</output>
+
+			<div class="form-group">
+				<label for="menuImages">Menu Images:</label>
+				<input type="file" id="menuImages" name="menuImages" class="form-control" multiple onchange="handleFiles('menuImages', 'menuImageList', menuImgList)" />
+			</div>
+			<output id="menuImageList">
+				@foreach (var imageUrl in ViewData["CurrentMenuImages"] as List<string>)
+				{
+					<div style="display: inline-block; position: relative;">
+						<img src="~/@imageUrl" style="width: 150px; margin: 10px;" />
+						<button type="button" style="position: absolute; top: 0; right: 0;
+				border-radius: 50%; background-color: rgba(255, 255, 255, 0.7);
+				color: red; border: none; padding: 2px 5px;" onclick="removeImage(this, '@imageUrl', menuImgList)">
+							X
+						</button>
+					</div>
+				}
+			</output>
+
+			<div class="form-group">
+				<label for="tags">Tags</label>
+				<div class="row">
+					@for (int i = 0; i < 4; i++)
+					{
+						<div class="col-3">
+							@for (int j = 0; j < baseTagsPerColumn + (i < remainder ? 1 : 0); j++)
+							{
+								int tagIndex = i * baseTagsPerColumn + j + Math.Min(i, remainder);
+								if (tagIndex < totalTags)
+								{
+									var tag = tags[tagIndex];
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="@tag.Id" name="selectedTags" value="@tag.Id" @(currentTags.Cast<Guid>().Contains(tag.Id) ? "checked" : "") />
+										<label class="form-check-label" for="@tag.Id">@tag.Name</label>
+									</div>
+								}
+							}
+						</div>
+					}
+				</div>
+				<small id="tagError" class="form-text text-danger" style="display:none;">You must select between 1 and 10 tags.</small>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+	let restaurantImgList = [];
+	let menuImgList = [];
+
+	document.addEventListener('DOMContentLoaded', (event) => {
+		// Thêm URL của hình ảnh từ csdl vào restaurantImgList
+		restaurantImgList.push(...currentRestaurantImages);
+		// Thêm URL của hình ảnh từ csdl vào restaurantImgList
+		restaurantImgList.push(...currentRestaurantImages.map(imageUrl => "~/" + imageUrl));
+		// Hiển thị hình ảnh
+		displayImages(restaurantImgList, 'restaurantImageList');
+	});
+
+	// function previewImages(inputId, outputId, imgList) {
+	// 	const input = document.getElementById(inputId);
+	// 	const files = input.files;
+
+	// 	// Chuyển đổi FileList thành mảng
+	// 	const filesArray = Array.from(files);
+
+	// 	// Lưu trữ các URL tệp đã chọn
+	// 	const urls = filesArray.map(file => URL.createObjectURL(file));
+
+	// 	// Thêm các URL mới vào imgList
+	// 	imgList.push(...urls);
+
+	// 	// Hiển thị hình ảnh
+	// 	displayImages(imgList, outputId);
+	// }
+
+	function handleFiles(inputId, outputId, imgList) {
+		const input = document.getElementById(inputId);
+		const files = input.files;
+
+		// Chuyển FileList sang mảng
+		const fileArray = Array.from(files);
+
+		// Lưu trữ các URL tệp đã chọn
+		const urls = fileArray.map(file => URL.createObjectURL(file));
+
+		// Thêm các URL mới vào imgList
+		imgList.push(...urls);
+
+		// Hiển thị hình ảnh
+		displayImages(imgList, outputId);
+	}
+
+	function displayImages(imgList, outputId) {
+		const output = document.getElementById(outputId);
+		output.innerHTML = '';
+
+		for (const imgUrl of imgList) {
+			const imgElement = document.createElement('img');
+			imgElement.src = imgUrl;
+			imgElement.style.width = '150px';
+			imgElement.style.margin = '10px';
+			imgElement.style.position = 'relative';
+			imgElement.classList.add('img-preview');
+
+			const deleteBtn = document.createElement('button');
+			deleteBtn.innerText = 'X';
+			deleteBtn.style.position = 'absolute';
+			deleteBtn.style.top = '0';
+			deleteBtn.style.right = '0';
+			deleteBtn.style.borderRadius = '50%';
+			deleteBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+			deleteBtn.style.color = 'red';
+			deleteBtn.style.border = 'none';
+			deleteBtn.style.padding = '2px 5px';
+			deleteBtn.onclick = function () { removeImage(imgUrl, imgElement, deleteBtn, 'restaurantImageList', restaurantImgList); }
+
+			const container = document.createElement('div');
+			container.style.display = 'inline-block';
+			container.style.position = 'relative';
+			container.classList.add('img-container');
+			container.appendChild(imgElement);
+			container.appendChild(deleteBtn);
+
+			output.appendChild(container);
+		}
+	}
+
+	function removeImage(url, imgElement, deleteBtn, outputId, imgList) {
+		// Xóa từ giao diện người dùng
+		const container = imgElement.parentElement;
+		container.removeChild(imgElement);
+		container.removeChild(deleteBtn);
+
+		// Xóa khỏi danh sách hình ảnh
+		const index = imgList.indexOf(url);
+		if (index > -1) {
+			imgList.splice(index, 1);
+		}
+
+		// Cập nhật giao diện sau khi xóa
+		displayImages(imgList, outputId);
+	}
+
+</script>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+
+	<script>
+		$(document).ready(function () {
+			$('.ckeditor').each(function () {
+				CKEDITOR.replace($(this).attr('id'), {
+					customConfig: '~/ckeditor/config.js',
+					extraAllowedContent: 'span',
+				});
+			});
+		});
+	</script>
+}

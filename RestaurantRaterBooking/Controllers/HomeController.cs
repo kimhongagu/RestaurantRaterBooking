@@ -9,42 +9,42 @@ namespace RestaurantRaterBooking.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-        private readonly Models.AppContext _context;
+		private readonly Models.AppContext _context;
 
-        public HomeController(ILogger<HomeController> logger, Models.AppContext context)
+		public HomeController(ILogger<HomeController> logger, Models.AppContext context)
 		{
 			_logger = logger;
 			_context = context;
 		}
 		public async Task<IActionResult> Index(int? page)
 		{
-            int pageSize = 4;
-            int pageNumber = (page ?? 1);
+			int pageSize = 4;
+			int pageNumber = (page ?? 1);
 
-            IEnumerable<Restaurant> restaurants = _context.Restaurant
-                .Include(r => r.Category)
-                .Include(r => r.City)
-                .Include(r => r.Images)
-                .Include(r => r.Reviews);
+			IEnumerable<Restaurant> restaurants = _context.Restaurant
+				.Include(r => r.Category)
+				.Include(r => r.City)
+				.Include(r => r.Images)
+				.Include(r => r.Reviews).ToList();
 
 			ViewData["RestaurantImages"] = restaurants.ToDictionary(
-                r => r.Id,
-                r => r.Images.FirstOrDefault(i => i.ImageType == ImageType.RestaurantImage)?.ImagePath
-            );
+				r => r.Id,
+				r => r.Images != null ? r.Images.FirstOrDefault(i => i.ImageType == ImageType.RestaurantImage)?.ImagePath : "Uploads\\NoImage.jpg"
+			);
 
-            ViewData["Restaurants"] = restaurants.ToPagedList(pageNumber, pageSize);
+			ViewData["Restaurants"] = restaurants.ToPagedList(pageNumber, pageSize);
 
 			ViewData["Blogs"] = _context.Blog.Include(b => b.PostCategory)
-                                .OrderByDescending(b => b.CreatedAt)
-                                .Take(2)
-                                .ToList();
-            ViewData["News"] = _context.News.Include(n => n.PostCategory)
-                                .OrderByDescending(b => b.CreatedAt)
-                                .Take(2)
-                                .ToList();
-            ViewData["Categories"] = _context.Category.ToList();
+								.OrderByDescending(b => b.CreatedAt)
+								.Take(2)
+								.ToList();
+			ViewData["News"] = _context.News.Include(n => n.PostCategory)
+								.OrderByDescending(b => b.CreatedAt)
+								.Take(2)
+								.ToList();
+			ViewData["Categories"] = _context.Category.ToList();
 
-            ViewData["Sliders"] = _context.Slider.ToList();
+			ViewData["Sliders"] = _context.Slider.ToList();
 
 			foreach (var restaurant in restaurants)
 			{
@@ -55,19 +55,19 @@ namespace RestaurantRaterBooking.Controllers
 			}
 
 			return View();
-        }
+		}
 
-        public IActionResult Contact()
-        {
-            return View();
-        }
+		public IActionResult Contact()
+		{
+			return View();
+		}
 
 		public IActionResult AboutUs()
 		{
 			return View();
 		}
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

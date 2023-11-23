@@ -25,6 +25,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\RestaurantUser\Data\" />
+    <Folder Include="Areas\RestaurantUser\Models\" />
     <Folder Include="wwwroot\ckfinder\userfiles\" />
     <Folder Include="wwwroot\Uploads\Categories\" />
     <Folder Include="wwwroot\Uploads\Blogs\" />
