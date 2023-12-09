@@ -1,52 +1,134 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿<!doctype html>
+<html class="no-js" lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RestaurantRaterBooking</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/RestaurantRaterBooking.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+
+    <!--====== Title ======-->
+    <title>Zyra – Clean, Minimal HTML Template</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--====== Favicon Icon ======-->
+    <link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/png">
+
+
+    <!-- CSS
+    ============================================ -->
+    <!--===== Vendor CSS (Bootstrap & Icon Font) =====-->
+    <!-- <link rel="stylesheet" href="~/assets/css/plugins/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/fontawesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/default.css"> -->
+    <!--===== Plugins CSS (All Plugins Files) =====-->
+    <!-- <link rel="stylesheet" href="~/assets/css/plugins/animate.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/slick.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/component.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/magnific-popup.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/jquery-ui.min.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/select2.min.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/photoswipe.css">
+    <link rel="stylesheet" href="~/assets/css/plugins/photoswipe-default-skin.css"> -->
+    <!--====== Main Style CSS ======-->
+    <!-- <link rel="stylesheet" href="~/assets/css/style.css"> -->
+    <!--====== Use the minified version files listed below for better performance and remove the files listed above ======-->
+
+    <link rel="stylesheet" href="~/assets/css/vendor/plugins.min.css">
+    <link rel="stylesheet" href="~/assets/css/style.min.css">
+
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RestaurantRaterBooking</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav flex-grow-2">
-                        <li class="nav-item">@await Html.PartialAsync("_LoginPartial")</li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!--====== preloader Start ======-->
+
+    <div class="preloader">
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - RestaurantRaterBooking - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!--====== preloader Ends ======-->
+    <!--====== Header Start ======-->
+
+    <header class="header-area">
+
+        @await Html.PartialAsync("_Navbar.cshtml")
+
+    </header>
+
+    <!--====== Header Ends ======-->
+
+    <!--====== Search Start ======-->
+
+    <div class="search-wrapper">
+        <div class="search-box">
+            <a href="javascript:void(0)" class="search-close"><i class="fal fa-times"></i></a>
+            <div class="search-form">
+                <label>Start typing and press Enter to search</label>
+                <div class="search-input">
+                    <form action="#">
+                        <input type="text" placeholder="Search entire store…">
+                        <button><i class="far fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!--====== Search Ends ======-->
+    
+    @RenderBody();
+
+    <!--====== Footer Start ======-->
+
+    <footer class="footer-area pt-50 pb-55">
+        @await Html.PartialAsync("_Footer.cshtml")
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <!--====== Footer Ends ======-->
+    <!--====== Overlay Start ======-->
+
+    <div class="overlay"></div>
+
+    <!--====== Overlay Ends ======-->
+    <!--====== Jquery js ======-->
+    <script src="~/assets/js/vendor/jquery-3.5.1.min.js"></script>
+    <script src="~/assets/js/vendor/modernizr-3.7.1.min.js"></script>
+
+    <!--====== All Plugins js ======-->
+    <!-- <script src="~/assets/js/plugins/jquery-ui.min.js"></script>
+    <script src="~/assets/js/plugins/popper.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap.min.js"></script>
+    <script src="~/assets/js/plugins/slick.min.js"></script>
+    <script src="~/assets/js/plugins/modernizr.custom.js"></script>
+    <script src="~/assets/js/plugins/jquery.dlmenu.js"></script>
+    <script src="~/assets/js/plugins/jquery.paroller.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.magnific-popup.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="~/assets/js/plugins/select2.min.js"></script>
+    <script src="~/assets/js/plugins/photoswipe.min.js"></script>
+    <script src="~/assets/js/plugins/photoswipe-ui-default.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.elevateZoom.min.js"></script>
+    <script src="~/assets/js/plugins/masonry.pkgd.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.appear.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.sticky-sidebar.min.js"></script>
+    <script src="~/assets/js/plugins/imagesloaded.pkgd.min.js"></script>
+    <script src="~/assets/js/plugins/ajax-contact.js"></script> -->
+
+    <script src="~/assets/js/plugins/parallax.min.js"></script>
+
+    <!--====== Use the minified version files listed below for better performance and remove the files listed above ======-->
+
+    <script src="~/assets/js/plugins.min.js"></script>
+
+
+    <!--====== Main Activation  js ======-->
+    <script src="~/assets/js/main.js"></script>
+
+    @RenderSection("Scripts", required: false)
 </body>
+
 </html>

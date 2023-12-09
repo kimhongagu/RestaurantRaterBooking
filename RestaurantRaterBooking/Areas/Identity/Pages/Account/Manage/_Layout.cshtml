@@ -1,29 +1,48 @@
 ﻿@{
-    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
-    {
-        Layout = parentLayout.ToString();
-    }
-    else
-    {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
-    }
+	if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+	{
+		Layout = parentLayout.ToString();
+	}
+	else
+	{
+		Layout = "~/Views/Shared/_Layout.cshtml";
+	}
 }
 
-<h1>Manage your account</h1>
 
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
-        </div>
-    </div>
-</div>
+@* <h1>Manage your account</h1> *@
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(/assets/images/page-banner-4.jpg);">
+	<div class="container">
+		<div class="page-banner-content text-center">
+			<h2 class="title">My Account</h2>
+			<ol class="breadcrumb justify-content-center">
+				<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+				<li class="breadcrumb-item active">My Account</li>
+			</ol>
+		</div>
+	</div>
+</section>
+
+<!--====== Page Banner Ends ======-->
+
+<section class="my-account-page pt-50 pb-80">
+	<div class="container">
+		<div class="row">
+			<div class="col-xl-3 col-md-4">
+				<div class="my-account-menu mt-30">
+					<partial name="_ManageNav" />
+				</div>
+			</div>
+			<div class="col-md-8">
+				@RenderBody()
+			</div>
+		</div>
+	</div>
+</section>
+
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+	@RenderSection("Scripts", required: false)
 }

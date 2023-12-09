@@ -1,0 +1,54 @@
+﻿<div class="footer-widget">
+    <div class="container footer-container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="footer-logo-copyright mt-30">
+                    <a href="index.html">
+                        <img src="~/assets/images/logo-white.png" alt="Logo">
+                    </a>
+                    <p>&copy; 2021 <span> Zyra </span> Made with <i class="fa fa-heart"></i> by <a href="https://hasthemes.com/">HasThemes</a></p>
+                </div>
+                <div class="footer-social mt-30">
+                    <ul class="social">
+                        <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                        <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="footer-link-wrapper flex-wrap">
+                    <div class="footer-link mt-30">
+                        <h5 class="footer-title">Useful Link</h5>
+                        <ul class="link">
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="AboutUs">About us</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-link mt-30">
+                        <h5 class="footer-title">Category</h5>
+                        <ul class="link">
+                            @await Component.InvokeAsync("CategoryMenu")
+                        </ul>
+                    </div>
+                    <div class="footer-link mt-30">
+                        <h5 class="footer-title">Blog</h5>
+                        <ul class="link">
+                            @await Component.InvokeAsync("BlogMenu")
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="footer-map mt-30">
+                    <div id="contact-map">
+                        @* <iframe src="<iframe src=" https: //www.google.com/maps/embed?pb =!1m18!1m12!1m3!1d3924.6272291437062!2d105.42976397426662!3d10.371661066530777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310a731e7546fd7b%3A0x953539cd7673d9e5!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBBbiBHaWFuZyAtIMSQSFFHIFRQSENN!5e0!3m2!1svi!2s!4v1701133730027!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>" style="border:0;width:100%;height:100%;" allowfullscreen="" loading="lazy"></iframe> *@
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3924.6272291437062!2d105.42976397426662!3d10.371661066530777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310a731e7546fd7b%3A0x953539cd7673d9e5!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBBbiBHaWFuZyAtIMSQSFFHIFRQSENN!5e0!3m2!1svi!2s!4v1701133730027!5m2!1svi!2s" width="600" height="450" style="border:0;width:100%;height:100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+﻿@model RestaurantRaterBooking.Models.Category
+
+@{
+	ViewData["Title"] = "Details";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var category = ViewData["Category"] as Category;
+	var restaurants = ViewData["Restaurants"] as IPagedList<Restaurant>;
+
+	var restaurantImage = ViewData["RestaurantImages"] as Dictionary<Guid, string>;
+}
+
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(/assets/images/page-banner-2.jpg);">
+	<div class="container">
+		<div class="page-banner-content text-center">
+			<h2 class="title">@category.Name</h2>
+			<ol class="breadcrumb justify-content-center">
+				<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+				<li class="breadcrumb-item active">@category.Name</li>
+			</ol>
+		</div>
+	</div>
+</section>
+
+<!--====== Page Banner Ends ======-->
+<!--====== Shop Masonry Start ======-->
+
+<section class="shop-page pt-50 pb-80">
+	<div class="container-fluid custom-container">
+		<div class="row product-row">
+			@foreach (var item in restaurants)
+			{
+				var restaurantId = item.Id;
+
+
+				<div class="product-col-2 col-xl-3 col-lg-4 col-md-4 col-sm-6">
+					<div class="single-product mt-50">
+						<div class="product-image">
+							<div class="image">
+								<a class="link" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurantId"></a>
+								@if (restaurantImage.ContainsKey(restaurantId))
+								{
+									<img style="height: 352px; object-fit: cover; object-position: center;" class="product-1" src="/@restaurantImage[restaurantId].Replace("\\", "/")" alt="product">
+								}
+								@* <img class="product-1" src="/assets/images/product/product-5.jpg" alt="product"> *@
+							</div>
+							<ul class="product-meta text-center">
+								<li><a data-bs-tooltip="tooltip" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurantId"><i class="fal fa-search-plus"></i></a></li>
+							</ul>
+						</div>
+						<div class="product-content d-flex justify-content-between">
+							<div class="product-title">
+								<h4 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurantId">@item.Name</a></h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+		<div class="pagination-items mt-45">
+			<ul class="pagination justify-content-center">
+				<li><a class="prev" href="@Url.Action("Index", new { id = category.Id, page = (restaurants.PageNumber - 1) })">Previous</a></li>
+
+				@for (int i = 1; i <= restaurants.PageCount; i++)
+				{
+					<li><a class="@(i == restaurants.PageNumber ? "active" : "")" href="@Url.Action("Index", new { id = category.Id, page = i })">@i</a></li>
+				}
+
+				<li><a class="next" href="@Url.Action("Index", new { id = category.Id, page = (restaurants.PageNumber + 1) })">Next</a></li>
+			</ul>
+		</div>
+
+	</div>
+</section>
+
+<!--====== Shop Masonry Ends ======-->

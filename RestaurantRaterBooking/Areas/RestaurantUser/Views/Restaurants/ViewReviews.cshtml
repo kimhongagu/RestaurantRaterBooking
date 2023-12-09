@@ -1,0 +1,132 @@
+﻿@{
+	var reviews = ViewData["Reviews"] as List<Review>;
+	Layout = "~/Areas/RestaurantUser/Views/Shared/_Layout.cshtml";
+}
+
+@section head_scripts {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="RestaurantUser" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="RestaurantUser" asp-controller="Restaurants" asp-action="ViewReviews" class="nav-link">Đánh giá và phản hồi</a>
+        </li>
+    </ul>
+}
+
+<h1 class="text-center mb-2 pt-2">Reviews</h1>
+<style>
+	.link-grey {
+		color: #aaa;
+	}
+
+		.link-grey:hover {
+			color: #00913b;
+		}
+</style>
+<section style="background-color: #f7f6f6;">
+	<div class="container my-5 py-5 text-dark">
+		<div class="row d-flex justify-content-center">
+            <div class="col-md-12 col-lg-10 col-xl-8">
+                @if (reviews != null && reviews.Any())
+                {
+                    foreach (var item in reviews)
+                    {
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h6 class="text-dark fw-bold mb-0">
+                                            @item.User.UserName
+                                        </h6>
+                                        <p class="text-dark mb-0 me-2">@item.CreatedAt</p>
+                                    </div>
+                                    <p class="text-secondary mb-0">@item.Comment</p>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="small mb-0" style="color: #aaa;">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star @((i <= item.Rating) ? "text-warning" : "") me-2"></i>
+                                            }
+                                        </p>
+                                        <div class="d-flex flex-row">
+                                            @if (!(ViewData["Replies"] is Dictionary<Guid, List<Reply>> replies && replies.ContainsKey(item.Id) && replies[item.Id].Any()))
+                                            {
+                                                <i class="fas fa-pencil-alt ms-2" style="color: #aaa;" onclick="toggleReplySection('@item.Id')"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (ViewData["Replies"] is Dictionary<Guid, List<Reply>> reply && reply.ContainsKey(item.Id))
+                                {
+                                    var rep = reply[item.Id];
+
+                                    foreach (var replyItem in rep)
+                                    {
+                                        <div class="card mt-2">
+                                            <div class="card-body">
+                                                <div class="w-100">
+                                                    <p>@replyItem.ReplyAt</p>
+                                                    <p class="text-secondary mb-0">@replyItem.ReplyComment</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                <div class="reply-section" id="replySection_@item.Id" style="display: none;">
+                                    <form asp-area="RestaurantUser" asp-action="AddReply" asp-controller="Restaurants" method="post">
+                                        <input type="hidden" name="restaurantId" value="@ViewData["RestaurantId"]" />
+                                        <input type="hidden" name="reviewId" value="@item.Id" />
+                                        <textarea class="form-control mb-2" id="replyTextarea_@item.Id" name="replyComment" rows="3"></textarea>
+                                        <button type="submit" class="btn btn-primary">Post Reply</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert" style="background-color: #89B9AD;" role="alert">
+                        Hiện chưa có đánh giá nào về nhà hàng của bạn!
+                    </div>
+                }
+            </div>
+	</div>
+	</div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	function expandReplySection(commentId) {
+		// Hiển thị phần mở rộng khi click vào nút pencil
+		$("#replySection_" + commentId).show();
+	}
+
+	function postReply(commentId) {
+		// Lấy nội dung từ textarea
+		var replyContent = $("#replyTextarea_" + commentId).val();
+
+		$("#replySection_" + commentId).hide();
+	}
+
+    function toggleReplySection(commentId) {
+        // Check the current visibility status of the reply section
+        var replySection = $("#replySection_" + commentId);
+
+        if (replySection.is(":visible")) {
+            // If visible, hide it
+            replySection.hide();
+        } else {
+            // If hidden, show it
+            replySection.show();
+        }
+    }
+</script>

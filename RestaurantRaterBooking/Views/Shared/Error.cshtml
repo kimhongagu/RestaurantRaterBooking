@@ -1,4 +1,4 @@
-﻿@model ErrorViewModel
+﻿@* @model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
 }
@@ -23,3 +23,17 @@
     For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
     and restarting the app.
 </p>
+<h1>hehe</h1>
+ *@
+
+@*  @model Microsoft.AspNetCore.Diagnostics.StatusCodeReExecuteFeature
+
+<h1>Error</h1>
+<p>We're sorry, but the page you requested could not be found.</p> *@
+
+    @model ErrorViewModel
+
+<h1>Error</h1>
+<p>We're sorry, but an error has occurred.</p>
+<p>Status code: @Model.StatusCode</p>
+<p>Original path: @Model.OriginalPath</p>

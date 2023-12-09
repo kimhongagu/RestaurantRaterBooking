@@ -1,0 +1,95 @@
+﻿@model IEnumerable<RestaurantRaterBooking.Models.Booking>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/RestaurantUser/Views/Shared/_Layout.cshtml";
+}
+
+@section head_scripts {
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="RestaurantUser" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="RestaurantUser" asp-controller="Bookings" asp-action="Index" class="nav-link">Quản lý đặt bàn</a>
+		</li>
+	</ul>
+}
+
+<h1 class="text-center mb-2 pt-2">Danh sách đặt bàn</h1>
+
+<table class="table">
+	<thead>
+	<th>STT</th>
+	<th>Email</th>
+	<th>Thời gian</th>
+	<th>Số người</th>
+	<th>Thông tin</th>
+	<th>Ngày đặt</th>
+	<th>Ghi chú</th>
+	<th>Trang thái</th>
+	</thead>
+	<tbody>
+		@{
+			int i = 1;
+		}
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@i</td>
+				<td>@item.User.Email</td>
+				<td>
+					<p>@item.BookingDate.ToString("dd-MM-yyyy")</p>
+					<p>@item.BookingTime.ToString("HH:mm:ss")</p>
+				</td>
+				<td>
+					<p>Người lớn: @item.Adults</p>
+					<p>Trẻ em: @item.Children</p>
+				</td>
+				<td>
+					<p>@item.Name</p>
+					<p>@item.PhoneNumber</p>
+				</td>
+				<td>@item.CreatedAt</td>
+				<td>@item.Note</td>
+				<td>
+					<form asp-area="RestaurantUser" asp-controller="Bookings" asp-action="UpdateStatus">
+						<input type="hidden" name="bookingId" value="@item.Id" />
+					@if (item.Status == Status.WaitingList)
+					{
+							<button type="submit" name="status" value="Confirmed" class="btn btn-outline-success">Xác nhận</button>
+					}
+					else if (item.Status == Status.CanceledByRestaurant)
+					{
+						<p>Đã hủy bởi nhà hàng</p>
+					}
+					else if (item.Status == Status.CanceledByCustomer)
+					{
+						<p>Đã hủy bởi khách hàng</p>
+					}
+					else if (item.Status == Status.Confirmed)
+					{
+							<button type="submit" name="status" value="Completed" class="btn btn-outline-success">Hoàn thành</button>
+							<button type="submit" name="status" value="Unsuccessful" class="btn btn-outline-danger">Không thành công</button>
+					}
+					else if (item.Status == Status.Unsuccessful)
+					{
+						<p>Không thành công</p>
+					}
+					else if (item.Status == Status.Completed)
+					{
+						<p>Hoàn thành</p>
+					}
+					</form>
+				</td>
+			</tr>
+			i++;
+		}
+	</tbody>
+</table>

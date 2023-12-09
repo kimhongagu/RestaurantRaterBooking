@@ -1,0 +1,49 @@
+﻿<div class="header-navbar">
+	<div class="container-fluid custom-container">
+		<div class="header-wrapper d-flex justify-content-between align-items-center">
+
+			<div class="header-logo">
+				<a href="index.html">
+					<img src="/assets/images/logo-black.png" alt="Logo">
+				</a>
+			</div>
+
+			<div class="header-menu site-nav d-none d-lg-block">
+				<ul class="main-menu">
+					<li class="static active">
+						<a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+					</li>
+					
+					<li class="static">
+						<a href="#">Danh mục</a>
+						<ul class="sub-menu sub-mega-menu flex-wrap">
+						@await Component.InvokeAsync("CategoryMenu")
+						</ul>
+					</li>
+
+					<li>
+						<a href="#">Blog</a>
+						<ul class="sub-menu">
+						@await Component.InvokeAsync("BlogMenu")
+						</ul>
+					</li>
+
+					<li>
+						<a href="#">News</a>
+						@await Component.InvokeAsync("NewsMenu")
+					</li>
+					<li><a asp-controller="Home" asp-action="AboutUs">About us</a></li>
+					<li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+				</ul>
+			</div>
+
+			<div class="header-meta d-flex">
+				
+					@* <li><a class="cart-toggle" href="javascript:void(0)"><i class="far fa-Shopping-cart"></i><span>3</span></a></li>
+					<li><a class="search-toggle" href="javascript:void(0)"><i class="far fa-search"></i></a></li> *@
+					@await Html.PartialAsync("_LoginPartial")
+			</div>
+
+		</div>
+	</div>
+</div>

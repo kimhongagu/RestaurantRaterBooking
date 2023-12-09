@@ -1,0 +1,86 @@
+﻿@model RestaurantRaterBooking.Models.Slider
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section head_scripts {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Sliders" asp-action="Index" class="nav-link">Quản lý hệ thống</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Sliders" asp-action="Index" class="nav-link">Sliders</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Sliders" asp-action="Create" class="nav-link">Tạo mới</a>
+        </li>
+    </ul>
+}
+
+<h1>Create</h1>
+
+<h4>Slider</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CoverImage" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="CoverImage" type="file" class="form-control" id="fileInput" style="display: none;" />
+                    <input type="text" class="form-control" readonly id="fileName" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
+                    </div>
+                </div>
+                <span asp-validation-for="CoverImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Alias" class="control-label"></label>
+                <input asp-for="Alias" class="form-control" />
+                <span asp-validation-for="Alias" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CityID" class="control-label"></label>
+                <select asp-for="CityID" class ="form-control" asp-items="ViewBag.CityID">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        document.getElementById('fileName').value = this.files[0].name;
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,174 @@
+﻿@model IPagedList<RestaurantRaterBooking.Models.Restaurant>
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section head_scripts {
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link">Quản lý nhà hàng</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Restaurants" asp-action="Index" class="nav-link">Quản lý nhà hàng</a>
+		</li>
+	</ul>
+}
+
+<h1 class="text-center mb-2">Danh sách nhà hàng</h1>
+
+<div class="row mb-2">
+	<div class="col-md-6 pl-3 input-group">
+		<form asp-area="Admin" asp-action="Index" asp-controller="Restaurants" method="get" class="input-group input-group">
+			<input type="text" name="searchText" class="form-control"/>
+			<div class="input-group-append">
+				<button type="submit" class="btn btn-outline-secondary">Search</button>
+			</div>
+		</form>
+	</div>
+	@* <div class="col-md-6 text-right pr-3">
+		<a asp-action="Create" class="btn btn-primary">Create New</a>
+	</div> *@
+</div>
+<input type="hidden" id="itemID" />
+<table class="table">
+	<thead>
+		<tr>
+			<th>STT</th>
+			<th>Tên</th>
+			<th>Sđt</th>
+			<th>Email</th>
+			<th>Danh mục</th>
+			<th>Địa chỉ</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			int stt = 1;
+		}
+		@foreach (var item in Model)
+		{
+			<tr>
+				<th>@stt</th>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Phone)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Email)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Category.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.City.Name)
+				</td>
+				<td>
+					<a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+					<a class="btn btn-outline-danger deleteButton" href="#" data-toggle="modal" data-target="#deleteConfirmationModal" data-id="@item.Id">Delete</a>
+				</td>
+			</tr>
+			stt++;
+		}
+	</tbody>
+</table>
+
+<div class="pagination-container d-flex justify-content-end mr-5">
+	<ul class="pagination">
+
+		@if (Model.HasPreviousPage)
+		{
+			<li class="page-item">
+				<a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
+			</li>
+		}
+
+		@for (var i = 1; i <= Model.PageCount; i++)
+		{
+			<li class="page-item @(i == Model.PageNumber ? "active" : "")">
+				<a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+			</li>
+		}
+
+		@if (Model.HasNextPage)
+		{
+			<li class="page-item">
+				<a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
+			</li>
+		}
+
+	</ul>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteConfirmationModalLabel">Xác nhận xóa</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Bạn có chắc chắn muốn xóa nhà hàng này không?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+				<button type="button" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	var restaurantIdToDelete;
+
+	$(document).ready(function () {
+		// Hiển thị modal xóa nhà hàng
+		$('.deleteButton').click(function () {
+			restaurantIdToDelete = $(this).data('id');
+			$('#deleteConfirmationModal').modal('show');
+		});
+
+		// Xóa nhà hàng khi nhấn nút "Xóa" trên modal
+		$('#confirmDeleteButton').click(function () {
+			var url = '/Admin/Restaurants/Delete/' + restaurantIdToDelete;
+
+			$.ajax({
+				type: "POST",
+				url: url,
+				headers: {
+					RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+				},
+				success: function (data) {
+					// Xử lý khi xóa thành công
+					alert("Đã xóa thành công");
+					location.reload();
+				},
+				error: function (data) {
+					// Xử lý khi xóa thất bại
+					alert("Xóa thất bại");
+				}
+			});
+		});
+	});
+</script>
+
+

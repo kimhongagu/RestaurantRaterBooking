@@ -1,0 +1,124 @@
+﻿@model RestaurantRaterBooking.Models.Blog
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var relatedBlogs = ViewData["RelatedBlogs"] as List<Blog>;
+}
+
+<style>
+    .page-banner::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-height: 100%;
+        background-color: rgba(255, 255, 255, 0.5);
+        z-index: 0; /* Đặt z-index thấp hơn cho lớp mờ */
+    }
+
+    .page-banner-content, breadcrumb {
+        position: relative;
+        z-index: 1; /* Đặt z-index cao hơn cho lớp chứa chữ */
+    }
+</style>
+
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(@Model.Image);">
+    <div class="container">
+        <div class="page-banner-content text-center">
+            <h2 class="title">@Model.Title</h2>
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="index.html">Blog</a></li>
+                <li class="breadcrumb-item active">@Model.Title</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<!--====== Page Banner Ends ======-->
+
+<!--====== Blog Details Start ======-->
+
+<section class="blog-details-page pt-80">
+    <div class="container">
+        <div class="blog-details-content">
+            <div class="row">
+                <div class="col-lg-10">
+                    <ul class="blog-meta">
+                        <li><a href="#">By <span> @Model.CreatedBy</span></a></li>
+                        <li><a href="#"><i class="fal fa-clock"></i> @Model.CreatedAt</a></li>
+                        <li><a href="#"><span>Photography</span></a></li>
+                    </ul>
+                    <p>@Model.ShortContent</p>
+                </div>
+            </div>
+            <div>
+                @Html.Raw(Model.Content)
+            </div>
+            <div>
+                Tags:
+                @foreach (var tag in Model.BlogTags)
+                {
+                    <span class="badge bg-secondary">@tag.Tag.Name</span>
+                }
+            </div>
+            <div class="post-share">
+                <span>Share Post</span>
+                <ul class="social">
+                    <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
+                    <li><a class="linkedin" href="#"><i class="fab fa-linkedin"></i></a></li>
+                    <li><a class="pinterest" href="#"><i class="fab fa-pinterest-p"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--====== Blog Details Ends ======-->
+
+<!--====== Related Post Start ======-->
+
+<section class="blog-area pt-135 pb-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="section-title text-center pb-50">
+                    <h2 class="title">Related Blogs</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            @foreach (var news in relatedBlogs)
+            {
+                <div class="col-lg-4 col-md-7">
+                    <div class="single-blog mt-30">
+                        <div class="blog-image">
+                            <a asp-controller="Blogs" asp-action="Details" asp-route-id="@news.Id">
+                                <img style="height: 185px; object-fit: cover; object-position: center; " src="@news.Image" alt="blog">
+                                <i class="fal fa-search-plus"></i>
+                            </a>
+                        </div>
+                        <div class="blog-content">
+                            <ul class="blog-category">
+                                <li><a href="#">@news.PostCategory.Name</a></li>
+                            </ul>
+                            <h4 class="title"><a asp-controller="Blogs" asp-action="Details" asp-route-id="@news.Id">@news.Title</a></h4>
+                            <ul class="blog-meta">
+                                <li><a asp-controller="Blogs" asp-action="Details" asp-route-id="@news.Id">By <span> @Model.CreatedBy</span></a></li>
+                                <li><a asp-controller="Blogs" asp-action="Details" asp-route-id="@news.Id"><i class="fal fa-clock"></i> @news.CreatedAt</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!--====== Related Post Ends ======-->

@@ -1,0 +1,13 @@
+﻿@model List<Category>
+
+
+    @* <ul class="sub-menu sub-mega-menu flex-wrap"> *@
+        @foreach (var category in Model as List<Category>)
+        {
+            <li>
+                <a asp-area="" asp-controller="Categories" asp-action="Index" asp-route-id="@category.Id">@category.Name</a>
+            </li>
+        }
+    @* </ul> *@
+
+

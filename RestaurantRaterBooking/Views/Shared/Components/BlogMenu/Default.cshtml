@@ -1,0 +1,6 @@
+﻿@model List<PostCategory>
+
+    @foreach(var item in Model)
+    {
+        <li><a asp-area="" asp-controller="PostCategories" asp-action="BlogDetails" asp-route-id="@item.Id">@item.Name</a></li>
+    } 
