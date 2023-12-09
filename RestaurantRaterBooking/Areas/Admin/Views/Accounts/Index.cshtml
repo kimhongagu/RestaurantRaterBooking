@@ -1,0 +1,194 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using RestaurantRaterBooking.Models
+
+@inject SignInManager<RestaurantRaterBooking.Models.ApplicationUser> SignInManager
+@inject UserManager<RestaurantRaterBooking.Models.ApplicationUser> UserManager
+
+@model IPagedList<RestaurantRaterBooking.Models.ApplicationUser>
+@{
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	var listAccount = ViewData["ListAccount"] as List<RestaurantRaterBooking.Models.ApplicationUser>;
+}
+
+@section head_scripts {
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Sliders" asp-action="Index" class="nav-link">Quản lý hệ thống</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Accounts" asp-action="Index" class="nav-link">Quản lý tài khoản</a>
+		</li>
+	</ul>
+}
+
+<h1 class="text-center mb-2">Danh sách tài khoản</h1>
+
+<div class="row">
+	<div class="col-md-6 pl-3 input-group">
+		<form asp-area="Admin" asp-action="Index" asp-controller="Accounts" method="get" class="input-group input-group">
+			<input type="text" name="searchText" class="form-control" />
+			<div class="input-group-append">
+				<button type="submit" class="btn btn-outline-secondary">Search</button>
+			</div>
+		</form>
+	</div>
+	<div class="col-md-6 text-right pr-3">
+		<a class="btn btn-primary ml-3" href="#" id="createAccount" data-toggle="modal" data-target="#createAccountModal">Create New</a>
+	</div>
+</div>
+
+<table class="table">
+	<thead>
+	<th>STT</th>
+	<th>Username</th>
+	<th>Email</th>
+	<th>Sđt</th>
+	<th>Vai trò</th>
+	<th>Trạng thái</th>
+	</thead>
+	<tbody>
+		@{
+			int stt = 1;
+		}
+		@foreach (var item in Model)
+		{
+			var roles = await UserManager.GetRolesAsync(item);
+			var rolesString = string.Join(", ", roles);
+			<tr>
+				<th>@stt</th>
+				<td>@item.UserName</td>
+				<td>@item.Email</td>
+				<td>@item.PhoneNumber</td>
+				<td>@rolesString</td>
+				<td>
+					<form asp-area="Admin" asp-controller="Accounts" asp-action="UpdateStatus">
+						<input type="hidden" name="userId" value="@item.Id" />
+						@if (item.LockoutEnabled)
+						{
+							<button type="submit" name="status" value="Blocked" style="background: none; border: none; padding: 0; cursor: pointer;">
+								<span class="badge rounded-pill bg-success">Active</span>
+							</button>
+						}
+						else
+						{
+							<button type="submit" name="status" value="Active" style="background: none; border: none; padding: 0; cursor: pointer;">
+								<span class="badge rounded-pill bg-danger">Blocked</span>
+							</button>
+						}
+					</form>
+				</td>
+			</tr>
+			stt++;
+		}
+	</tbody>
+</table>
+
+<div class="pagination-container d-flex justify-content-end mr-5">
+	<ul class="pagination">
+
+		@if (Model.HasPreviousPage)
+		{
+			<li class="page-item">
+				<a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
+			</li>
+		}
+
+		@for (var i = 1; i <= Model.PageCount; i++)
+		{
+			<li class="page-item @(i == Model.PageNumber ? "active" : "")">
+				<a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+			</li>
+		}
+
+		@if (Model.HasNextPage)
+		{
+			<li class="page-item">
+				<a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
+			</li>
+		}
+
+	</ul>
+</div>
+
+<!-- Modal for create -->
+<div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Create Admin Account</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form asp-action="Create" asp-controller="Accounts" asp-area="Admin">
+					<div class="form-group">
+						<label class="control-label">Email</label>
+						<input class="form-control" type="email" name="email" placeholder="Nhập email" />
+					</div>
+					<div class="form-group">
+						<label class="control-label">Password</label>
+						<input class="form-control" type="password" name="password" id="password" placeholder="Password" />
+					</div>
+					<div class="form-group">
+						<label class="control-label">Confirm Password</label>
+						<input class="form-control" type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" onchange="validatePassword()" />
+						<span id="passwordError" style="color: red;"></span>
+					</div>
+					<div class="form-group">
+						<input type="submit" value="Create" class="btn btn-primary" />
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function validatePassword() {
+		var password = document.getElementById('password').value;
+		var confirmPassword = document.getElementById('confirmPassword').value;
+		var errorSpan = document.getElementById('passwordError');
+
+		if (password !== confirmPassword) {
+			errorSpan.textContent = "Mật khẩu xác nhận không khớp.";
+		} else {
+			errorSpan.textContent = "";
+		}
+	}
+
+	$(document).ready(function () {
+		$("#createForm").submit(function (e) {
+			e.preventDefault();
+
+			var formData = new FormData($(this)[0]);
+
+			$.ajax({
+				type: 'POST',
+				url: '@Url.Action("Create", "Accounts")',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+					$('#createAccountModal').modal('hide');
+					location.reload();
+				},
+				error: function (xhr, status, error) {
+					console.error(xhr.responseText);
+				}
+			});
+		});
+	});
+</script>

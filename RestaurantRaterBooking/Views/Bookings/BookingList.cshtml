@@ -1,0 +1,95 @@
+﻿@{
+	var bookingList = ViewData["BookingList"] as List<Booking>;
+}
+<!--====== Page Banner Start ======-->
+
+<section class="page-banner bg_cover" style="background-image: url(/assets/images/m13-bg-2.jpg);">
+	<div class="container">
+		<div class="page-banner-content text-center">
+			<h2 class="title">Lịch sử đặt bàn</h2>
+			<ol class="breadcrumb justify-content-center">
+				<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+				<li class="breadcrumb-item"><a href="shop-sidebar.html">Restaurant</a></li>
+				<li class="breadcrumb-item active">Lịch sử đặt bàn</li>
+			</ol>
+		</div>
+	</div>o
+</section>
+
+<!--====== Page Banner Ends ======-->
+<div style="margin-right: 10px; margin-left: 10px;">
+	<table class="table">
+		<thead>
+		<th>STT</th>
+		<th>Tên nhà hàng</th>
+		<th>Thời gian</th>
+		<th>Số người</th>
+		<th>Thông tin</th>
+		<th>Ngày đặt</th>
+		<th>Ghi chú</th>
+		<th>Trang thái</th>
+		</thead>
+		<tbody>
+			@{
+				int i = 1;
+			}
+			@foreach (var item in bookingList)
+			{
+				<tr>
+					<td>@i</td>
+					<td>@item.Restaurant.Name</td>
+					<td>
+						<p>@item.BookingDate.ToString("dd-MM-yyyy")</p>
+						<p>@item.BookingTime.ToString("HH:mm:ss")</p>
+					</td>
+					<td>
+						<p>Người lớn: @item.Adults</p>
+						<p>Trẻ em: @item.Children</p>
+					</td>
+					<td>
+						<p>@item.Name</p>
+						<p>@item.PhoneNumber</p>
+					</td>
+					<td>@item.CreatedAt</td>
+					<td>@item.Note</td>
+
+					<td>
+						@if (item.Status == Status.Unpaid)
+						{
+							<button class="btn btn-outline-success">Thanh toán</button>
+						}
+						else if (item.Status == Status.WaitingList)
+						{
+							<p>Chờ xác nhận</p>
+						}
+						else if (item.Status == Status.AutoCanceled)
+						{
+							<p>Đã hủy tự động</p>
+						}
+						else if (item.Status == Status.CanceledByRestaurant)
+						{
+							<p>Đã hủy bởi nhà hàng</p>
+						}
+						else if (item.Status == Status.CanceledByCustomer)
+						{
+							<p>Đã hủy bởi bạn</p>
+						}
+						else if (item.Status == Status.Confirmed)
+						{
+							<p>Đặt bàn thành công</p>
+						}
+						else if (item.Status == Status.Unsuccessful)
+						{
+							<p>Không thành công</p>
+						}
+						else if (item.Status == Status.Completed)
+						{
+							<p>Hoàn thành</p>
+						}
+					</td>
+				</tr>
+				i++;
+			}
+		</tbody>
+	</table>
+</div>

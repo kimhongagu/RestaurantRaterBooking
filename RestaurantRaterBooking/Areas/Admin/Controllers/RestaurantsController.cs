@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +14,7 @@ using X.PagedList;
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class RestaurantsController : Controller
     {
         private readonly Models.AppContext _context;
@@ -115,48 +117,8 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 			return View(restaurant);
 		}
 
-		private async Task<string> SaveFile(IFormFile file, string subFolder)
-		{
-			// Tạo tên file mới bằng cách thêm một giá trị Guid phía trước
-			var newFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-
-			// Tạo đường dẫn tương đối
-			var relativePath = Path.Combine("Uploads", "Restaurants", subFolder, newFileName);
-
-			// Tạo đường dẫn tuyệt đối để lưu file vào thư mục
-			var absolutePath = Path.Combine(
-				Directory.GetCurrentDirectory(), "wwwroot", relativePath);
-
-			using (var stream = new FileStream(absolutePath, FileMode.Create))
-			{
-				await file.CopyToAsync(stream);
-			}
-
-			return relativePath; // Trả về đường dẫn tương đối
-		}
-
-
-
-		// GET: Admin/Restaurants/Edit/5
 		public async Task<IActionResult> Edit(Guid? id)
-        {
-			//if (id == null || _context.Restaurant == null)
-			//{
-			//    return NotFound();
-			//}
-
-			//         var restaurant = await _context.Restaurant.FindAsync(id);
-			//         if (restaurant == null)
-			//         {
-			//             return NotFound();
-			//         }
-
-			//ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Name", restaurant.CategoryID);
-			//ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Name", restaurant.CityID);
-			//ViewData["Tags"] = _context.Tag.ToList();
-			//return View(restaurant);
-
-			// Lấy thông tin nhà hàng từ database
+		{
 			var restaurant = await _context.Restaurant
 										   .Include(r => r.RestaurantTags)
 										   .Include(r => r.Images)
@@ -190,49 +152,134 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 			ViewData["CurrentTags"] = currentTags;
 			ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Name", restaurant.CategoryID);
 			ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Name", restaurant.CityID);
-			ViewData["Tags"] = _context.Tag.ToList();
+			ViewData["Tags"] = _context.Tag.Where(t => t.TagType == TagType.Restaurant).ToList();
 
 			// Gửi model đến view
 			return View(restaurant);
 		}
 
-        // POST: Admin/Restaurants/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [FromForm] Restaurant restaurant)
-        {
-            if (id != restaurant.Id)
-            {
-                return NotFound();
-            }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(Guid id, [FromForm] Restaurant restaurant, [FromForm] List<IFormFile> restaurantImages, [FromForm] List<IFormFile> menuImages, List<Guid> selectedTags)
+		{
+			if (id != restaurant.Id)
+			{
+				return NotFound();
+			}
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(restaurant);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RestaurantExists(restaurant.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Id", restaurant.CategoryID);
-            ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Id", restaurant.CityID);
-            return View(restaurant);
-        }
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					// Cập nhật hình ảnh
+					await UpdateImagesAsync(restaurant, restaurantImages, "resImages", ImageType.RestaurantImage);
+					await UpdateImagesAsync(restaurant, menuImages, "menuImages", ImageType.MenuImage);
 
+					// Cập nhật tags
+					await UpdateTagsAsync(restaurant, selectedTags);
+
+					_context.Update(restaurant);
+					_context.SaveChanges();
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					throw;
+				}
+
+				return RedirectToAction("Index", "Home", new { area = "Admin" });
+			}
+			ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Id", restaurant.CategoryID);
+			ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Id", restaurant.CityID);
+			return View(restaurant);
+		}
+
+		private async Task UpdateImagesAsync(Restaurant restaurant, List<IFormFile> newImages, string subFolder, ImageType imageType)
+		{
+			if (newImages.Count() != 0)
+			{
+				var imagesToDelete = _context.Image
+					.Where(i => i.ImageType == imageType && i.RestaurantID == restaurant.Id)
+					.ToList();
+
+				foreach (var existingImage in imagesToDelete)
+				{
+					DeleteFile(existingImage.ImagePath);
+					_context.Image.Remove(existingImage);
+				}
+
+				// Lưu và liên kết các hình ảnh mới
+				foreach (var newImage in newImages)
+				{
+					var imagePath = await SaveFile(newImage, subFolder);
+
+					var image = new Image
+					{
+						ImagePath = imagePath,
+						ImageType = imageType,
+						RestaurantID = restaurant.Id
+					};
+
+					restaurant.Images.Add(image);
+				}
+
+				await _context.SaveChangesAsync();
+			}
+		}
+
+		private async Task UpdateTagsAsync(Restaurant restaurant, List<Guid> selectedTags)
+		{
+			// Xóa hết các mối quan hệ tags của nhà hàng đó
+			var existingTags = await _context.RestaurantTag
+				.Where(rt => rt.RestaurantId == restaurant.Id)
+				.ToListAsync();
+
+			_context.RestaurantTag.RemoveRange(existingTags);
+
+			// Thêm mới những mối quan hệ cho các tags được chọn
+			foreach (var tagId in selectedTags)
+			{
+				var restaurantTag = new RestaurantTag
+				{
+					RestaurantId = restaurant.Id,
+					TagId = tagId
+				};
+
+				_context.Update(restaurantTag);
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+		private async Task<string> SaveFile(IFormFile file, string subFolder)
+		{
+			var newFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+			var relativePath = Path.Combine("Uploads", "Restaurants", subFolder, newFileName);
+			var absolutePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+
+			var destinationFolder = Path.GetDirectoryName(absolutePath);
+			if (!Directory.Exists(destinationFolder))
+			{
+				Directory.CreateDirectory(destinationFolder);
+			}
+
+			using (var stream = new FileStream(absolutePath, FileMode.Create))
+			{
+				await file.CopyToAsync(stream);
+			}
+
+			return relativePath;
+		}
+
+		private void DeleteFile(string relativePath)
+		{
+			var absolutePath = Path.Combine(
+				Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+
+			if (System.IO.File.Exists(absolutePath))
+			{
+				System.IO.File.Delete(absolutePath);
+			}
+		}
 		
         [HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
@@ -259,17 +306,12 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 					}
 				}
 
-
-				// Xóa các ảnh trong bảng Image
 				_context.Image.RemoveRange(restaurant.Images);
 
-				// Xóa các tag trong bảng RestaurantTag
 				_context.RestaurantTag.RemoveRange(restaurant.RestaurantTags);
 
-				// Xóa bản ghi Restaurant
 				_context.Restaurant.Remove(restaurant);
 
-				// Lưu thay đổi
 				await _context.SaveChangesAsync();
 			}
 			return RedirectToAction(nameof(Index));

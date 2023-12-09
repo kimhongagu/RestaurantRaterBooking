@@ -39,6 +39,7 @@ namespace RestaurantRaterBooking.Controllers
 				.Include(r => r.Category)
 				.Include(r => r.Images)
 				.Include(r => r.City)
+				.Include(r => r.Reviews)
 				.Include(t => t.RestaurantTags)
 				.ThenInclude(rt => rt.Tag)
 				.FirstOrDefaultAsync(m => m.Id == id);
@@ -81,6 +82,10 @@ namespace RestaurantRaterBooking.Controllers
 				ViewData["RelatedRestaurantImages"] = relatedRestaurantImages;
 			}
 
+			// Tính số sao trung bình
+			double averageRating = restaurant.Reviews.Any() ? restaurant.Reviews.Average(r => r.Rating) : 0;
+			restaurant.AverageRating = Math.Round(averageRating, 1);
+
 			// Lấy một hình ảnh của menu nhà hàng và lưu hình ảnh vào ViewData
 			ViewData["MenuImage"] = restaurant.Images.FirstOrDefault(i => i.ImageType == ImageType.MenuImage)?.ImagePath;
 
@@ -109,7 +114,6 @@ namespace RestaurantRaterBooking.Controllers
 
             return View(restaurant);
 		}
-
 
 		[HttpPost]
 		public async Task<IActionResult> CreateReview(Guid restaurantId, int rating, string comment)
@@ -194,6 +198,50 @@ namespace RestaurantRaterBooking.Controllers
 
 			return View();
 		}
+
+		[HttpPost]
+		public async Task<IActionResult> BookTable(Guid restaurantId, int? adults, int? children, string? note, DateTime bookingDate, DateTime bookingTime, string name, string phoneNumber)
+		{
+			if (!User.Identity.IsAuthenticated)
+			{
+				// Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
+				return RedirectToAction("Login", "Account", new { area = "Identity" });
+			}
+			var userId = (User.FindFirst(ClaimTypes.NameIdentifier).Value).ToString();
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return View();
+				}
+
+				var booking = new Booking
+				{
+					BookingDate = bookingDate,
+					BookingTime = bookingTime,
+					Adults = adults,
+					Children = children,
+					Note = note,
+					Status = 0,
+					CreatedAt = DateTime.Now,
+					RestaurantID = restaurantId,
+					UserID = userId,
+					Name = name,
+					PhoneNumber = phoneNumber
+				};
+
+				_context.Booking.Add(booking);
+				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Đặt bàn thành công!";
+				return RedirectToAction("Details", "Restaurants", new { id = restaurantId });
+			}
+			catch (Exception ex)
+			{
+				TempData["ErrorMessage"] = "Đặt bàn không thành công. Vui lòng thử lại sau.";
+				return View("Error");
+			}
+		}
+
 
 		private bool RestaurantExists(Guid id)
         {

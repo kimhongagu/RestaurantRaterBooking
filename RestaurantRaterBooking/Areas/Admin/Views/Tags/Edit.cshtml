@@ -5,6 +5,35 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
+@section head_scripts {
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Sliders" asp-action="Index" class="nav-link">Quản lý hệ thống</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Tags" asp-action="Index" class="nav-link">Quản lý tags</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a class="nav-link"><i class="fas fa-angle-right"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a asp-area="Admin" asp-controller="Tags" asp-action="Edit" class="nav-link">Cập nhật</a>
+        </li>
+    </ul>
+}
+
 <h1>Edit</h1>
 
 <h4>Tag</h4>

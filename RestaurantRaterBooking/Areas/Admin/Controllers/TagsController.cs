@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RestaurantRaterBooking.Models;
+using X.PagedList;
 
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class TagsController : Controller
     {
         private readonly Models.AppContext _context;
@@ -20,12 +23,21 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tags
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchText, int? page)
         {
-              return _context.Tag != null ? 
-                          View(await _context.Tag.ToListAsync()) :
-                          Problem("Entity set 'AppContext.Tag'  is null.");
-        }
+			int pageSize = 5;
+			int pageNumber = page ?? 1;
+
+			IEnumerable<Tag> appContext = _context.Tag;
+
+			if (!string.IsNullOrEmpty(searchText))
+			{
+				appContext = appContext.Where(x => x.Name.Contains(searchText)|| x.TagType.ToString().Contains(searchText));
+			}
+
+			var pagedList = await appContext.ToPagedListAsync(pageNumber, pageSize);
+			return View(pagedList);
+		}
 
         // GET: Admin/Tags/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -60,8 +72,6 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
         }
 
         // POST: Admin/Tags/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,TagType")] Tag tag)
@@ -86,7 +96,6 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception (if you have logging set up)
                     return View(tag);
                 }
             }
@@ -96,22 +105,20 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
         // GET: Admin/Tags/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Tag == null)
-            {
-                return NotFound();
-            }
+			if (id == null || _context.PostCategory == null)
+			{
+				return NotFound();
+			}
 
-            var tag = await _context.Tag.FindAsync(id);
-            if (tag == null)
-            {
-                return NotFound();
-            }
-            return View(tag);
-        }
+			var tag = await _context.Tag.FindAsync(id);
+			if (tag == null)
+			{
+				return NotFound();
+			}
+			return View(tag);
+		}
 
         // POST: Admin/Tags/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,TagType")] Tag tag)

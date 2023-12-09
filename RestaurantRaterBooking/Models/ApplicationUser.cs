@@ -10,6 +10,7 @@ namespace RestaurantRaterBooking.Models;
 public class ApplicationUser : IdentityUser
 {
     public bool IsRestaurantAccount { get; set; }
+    public Guid? RestaurantID { get; set; }
     public ICollection<Review> Review { get; set; }
 
     public ICollection<Booking> Bookings { get; set; }

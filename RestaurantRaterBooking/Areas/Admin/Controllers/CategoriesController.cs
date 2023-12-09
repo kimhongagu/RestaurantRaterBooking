@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,9 @@ using RestaurantRaterBooking.Models;
 
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
-	[Area("Admin")]
-	public class CategoriesController : Controller
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    public class CategoriesController : Controller
 	{
 		private readonly Models.AppContext _context;
 		private readonly IWebHostEnvironment _environment;
@@ -30,24 +32,6 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 						Problem("Entity set 'AppContext.Category'  is null.");
 		}
 
-		// GET: Admin/Categories/Details/5
-		public async Task<IActionResult> Details(Guid? id)
-		{
-			if (id == null || _context.Category == null)
-			{
-				return NotFound();
-			}
-
-			var category = await _context.Category
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (category == null)
-			{
-				return NotFound();
-			}
-
-			return View(category);
-		}
-
 		// GET: Admin/Categories/Create
 		public IActionResult Create()
 		{
@@ -55,11 +39,9 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 		}
 
 		// POST: Admin/Categories/Create
-		// To protect from overposting attacks, enable the specific properties you want to bind to.
-		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([FromForm] Category category)
+		public async Task<IActionResult> Create([Bind("Name, CoverImage")] Category category)
 		{
 			if (ModelState.IsValid)
 			{
@@ -115,11 +97,9 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 		}
 
 		// POST: Admin/Categories/Edit/5
-		// To protect from overposting attacks, enable the specific properties you want to bind to.
-		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(Guid id, [FromForm] Category category)
+		public async Task<IActionResult> Edit(Guid id, [FromForm] Category category, [FromForm]IFormFile CoverImage)
 		{
 			if (id != category.Id)
 			{
@@ -176,55 +156,40 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 			return View(category);
 		}
 
-		// GET: Admin/Categories/Delete/5
-		public async Task<IActionResult> Delete(Guid? id)
-		{
-			if (id == null || _context.Category == null)
-			{
-				return NotFound();
-			}
-
-			var category = await _context.Category
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (category == null)
-			{
-				return NotFound();
-			}
-
-			return View(category);
-		}
-
-		// POST: Admin/Categories/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(Guid id)
 		{
-			//if (_context.Category == null)
-			//{
-			//    return Problem("Entity set 'AppContext.Category'  is null.");
-			//}
-			//var category = await _context.Category.FindAsync(id);
-			//if (category != null)
-			//{
-			//    _context.Category.Remove(category);
-			//}
-
-			//await _context.SaveChangesAsync();
-			//return RedirectToAction(nameof(Index));
-
-			if (_context.Category == null)
+			try
 			{
-				return Problem("Entity set 'AppContext.Category' is null.");
-			}
-			var category = await _context.Category.FindAsync(id);
-			if (category != null)
-			{
+				var category = await _context.Category.FindAsync(id);
+				if (category == null)
+				{
+					return NotFound();
+				}
+
+				if (!string.IsNullOrEmpty(category.Image))
+				{
+					string imagePath = category.Image.Replace("/", "\\");
+
+					string fullPath = _environment.WebRootPath + imagePath;
+
+					if (System.IO.File.Exists(fullPath))
+					{
+						System.IO.File.Delete(fullPath);
+					}
+				}
+
 				_context.Category.Remove(category);
+				await _context.SaveChangesAsync();
+
+				return Ok();
 			}
-
-			await _context.SaveChangesAsync();
-			return Ok(); // Trả về 200 OK khi xóa thành công
-
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error during SaveChangesAsync(): {ex.Message}");
+				return StatusCode(500, "Internal Server Error");
+			}
 		}
 
 		private bool CategoryExists(Guid id)

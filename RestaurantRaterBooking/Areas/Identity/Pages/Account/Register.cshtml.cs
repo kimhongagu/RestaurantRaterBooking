@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using RestaurantRaterBooking.Models;
 
 namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
@@ -104,6 +105,7 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 			public string ConfirmPassword { get; set; }
 
 			public bool IsRestaurantAccount { get; set; }
+			public Guid? RestaurantID { get; set; }
 		}
 
 
@@ -113,7 +115,7 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 		}
 
-		public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+		public async Task<IActionResult> OnPostAsync(string isAdminAccount, string returnUrl = null)
 		{
 			returnUrl ??= Url.Content("~/");
 			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -129,31 +131,43 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 				{
 					_logger.LogInformation("User created a new account with password.");
 
-					// Tạo danh sách hình ảnh
-					var images = new List<Image>
-					{
-						new Image { ImagePath = "Uploads\\NoImage.jpg", ImageType = ImageType.RestaurantImage },
-						new Image { ImagePath = "Uploads\\NoImage.jpg", ImageType = ImageType.MenuImage },
-					};
-
 					if (user.IsRestaurantAccount)
 					{
+						// Tạo danh sách hình ảnh
+						var images = new List<Image>
+					{
+						new Image { ImagePath = "Uploads\\NoImage.jpg", ImageType = ImageType.RestaurantImage },
+						new Image { ImagePath = "Uploads\\NoImage-2.jpg", ImageType = ImageType.MenuImage },
+					};
 						var restaurant = new Restaurant
 						{
-							Id = Guid.Parse(user.Id),
+							//Id = Guid.Parse(user.Id),
+							Id = new Guid(),
 							Email = Input.Email,
 							Images = images,
 							CategoryID = Guid.Parse("19594a8b-1873-43c4-b21d-461b759c74a8"),
 							CityID = Guid.Parse("f64676c0-06ab-497a-aaaf-3b811e985e9e")
 						};
-
+						//user.RestaurantID = restaurant.Id;
 						_context.Restaurant.Add(restaurant);
 						_context.SaveChanges();
 
+						user.RestaurantID = restaurant.Id;
+						await _userManager.UpdateAsync(user);
 					}
-					string roleName = Input.IsRestaurantAccount ? "Restaurant" : "Customer";
-					_userManager.AddToRoleAsync(user, roleName);
+
+					string roleId = Input.IsRestaurantAccount ? "435c8ecf-0069-4019-8562-13166c585a16" : "3598d8ee-9b95-4fdf-b9b8-76126c79877d";
+					//_userManager.AddToRoleAsync(user, roleName);
 					var userId = await _userManager.GetUserIdAsync(user);
+
+					if (isAdminAccount == "Admin")
+					{
+						roleId = "7715b01e-3872-4559-b05b-185dc0625f41";
+					}
+					var userRole = new IdentityUserRole<string> { UserId = userId, RoleId = roleId };
+					_context.UserRoles.Add(userRole);
+					await _context.SaveChangesAsync();
+
 					var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 					var callbackUrl = Url.Page(
@@ -163,7 +177,7 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 						protocol: Request.Scheme);
 
 					await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-						$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+						$"Please confirm your account by <a style='margin-top: 50px;' href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
 					if (_userManager.Options.SignIn.RequireConfirmedAccount)
 					{

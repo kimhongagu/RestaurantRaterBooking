@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using RestaurantRaterBooking.Models;
 namespace RestaurantRaterBooking.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class PostCategoriesController : Controller
     {
         private readonly Models.AppContext _context;
@@ -27,48 +29,29 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
                           Problem("Entity set 'AppContext.PostCategory'  is null.");
         }
 
-        // GET: Admin/PostCategories/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null || _context.PostCategory == null)
-            {
-                return NotFound();
-            }
-
-            var postCategory = await _context.PostCategory
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (postCategory == null)
-            {
-                return NotFound();
-            }
-
-            return View(postCategory);
-        }
-
         // GET: Admin/PostCategories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/PostCategories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] PostCategory postCategory)
-        {
-            if (ModelState.IsValid)
-            {
-                postCategory.Id = Guid.NewGuid();
-                _context.Add(postCategory);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(postCategory);
-        }
+		// POST: Admin/PostCategories/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Name, PostType")] PostCategory postCategory)
+		{
+			if (ModelState.IsValid)
+			{
+				_context.Add(postCategory);
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
 
-        // GET: Admin/PostCategories/Edit/5
+			return View(postCategory);
+		}
+
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.PostCategory == null)
@@ -84,9 +67,6 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
             return View(postCategory);
         }
 
-        // POST: Admin/PostCategories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] PostCategory postCategory)
@@ -119,23 +99,6 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
             return View(postCategory);
         }
 
-        // GET: Admin/PostCategories/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.PostCategory == null)
-            {
-                return NotFound();
-            }
-
-            var postCategory = await _context.PostCategory
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (postCategory == null)
-            {
-                return NotFound();
-            }
-
-            return View(postCategory);
-        }
 
         // POST: Admin/PostCategories/Delete/5
         [HttpPost, ActionName("Delete")]

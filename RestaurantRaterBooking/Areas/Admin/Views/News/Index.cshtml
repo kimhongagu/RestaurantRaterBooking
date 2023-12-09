@@ -5,18 +5,41 @@
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+@section head_scripts {
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="PostCategories" asp-action="Index" class="nav-link">Quản lý bài đăng</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="News" asp-action="Index" class="nav-link">Quản lý tin tức</a>
+		</li>
+	</ul>
+}
+
+<h1 class="text-center mb-2">Danh sách tin tức</h1>
 
 <div class="row">
-	<div class="col-md-6">
-		<form asp-area="Admin" asp-action="Index" asp-controller="News" method="get" class="input-group input-group-sm">
+	<div class="col-md-6 pl-3 input-group">
+		<form asp-area="Admin" asp-action="Index" asp-controller="News" method="get" class="input-group input-group">
 			<input type="text" name="searchText" class="form-control" />
-			<span class="input-group-append">
-				<button type="submit" class="btn btn-info btn-flat">Search</button>
-			</span>
+			<div class="input-group-append">
+				<button type="submit" class="btn btn-outline-secondary">Search</button>
+			</div>
 		</form>
 	</div>
-	<div class="col-md-6 text-right">
+	<div class="col-md-6 text-right pr-3">
 		<a asp-action="Create" class="btn btn-primary">Create New</a>
 	</div>
 </div>
@@ -24,35 +47,40 @@
 <table class="table">
 	<thead>
 		<tr>
-			<th>Hình ảnh</th>
+			<th class="text-center">STT</th>
+			<th class="text-center">Hình ảnh</th>
 			<th>Tiêu đề</th>
-			<th>Xuất bản</th>
-			<th>Danh mục</th>
+			<th class="text-center">Xuất bản</th>
+			<th class="text-center">Danh mục</th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
+		@{
+			int stt = 1;
+		}
 		@foreach (var item in Model)
 		{
 			<tr>
-				<td>
+				<th class="text-center">@stt</th>
+				<td class="text-center">
 					<img src="@item.Image" width="50" />
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.Title)
 				</td>
-				<td>
+				<td class="text-center">
 					@Html.DisplayFor(modelItem => item.IsPublish)
 				</td>
-				<td>
+				<td class="text-center">
 					@Html.DisplayFor(modelItem => item.PostCategory.Name)
 				</td>
-				<td>
+				<td class="text-center">
 					<a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-					@* <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
 					<a class="btn btn-outline-danger deleteButton" href="#" data-toggle="modal" data-target="#deleteConfirmationModal" data-id="@item.Id">Delete</a>
 				</td>
 			</tr>
+			stt++;
 		}
 	</tbody>
 </table>
@@ -84,6 +112,7 @@
 	</ul>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Modal -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -104,8 +133,6 @@
 		</div>
 	</div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 	var IdToDelete;

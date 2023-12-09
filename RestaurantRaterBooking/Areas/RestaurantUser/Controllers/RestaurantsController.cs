@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,185 +12,214 @@ using RestaurantRaterBooking.Models;
 
 namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 {
-    [Area("RestaurantUser")]
-    public class RestaurantsController : Controller
-    {
-        private readonly Models.AppContext _context;
+	[Area("RestaurantUser")]
+	[Authorize(Roles = "Restaurant")]
+	public class RestaurantsController : Controller
+	{
+		private readonly Models.AppContext _context;
 
-        public RestaurantsController(Models.AppContext context)
-        {
-            _context = context;
-        }
+		public RestaurantsController(Models.AppContext context)
+		{
+			_context = context;
+		}
 
-        // GET: RestaurantUser/Restaurants
-        public async Task<IActionResult> Index()
-        {
-            var appContext = _context.Restaurant.Include(r => r.Category).Include(r => r.City);
-            return View(await appContext.ToListAsync());
-        }
+		// GET: RestaurantUser/Restaurants
+		public async Task<IActionResult> Index()
+		{
+			var appContext = _context.Restaurant.Include(r => r.Category).Include(r => r.City);
+			return View(await appContext.ToListAsync());
+		}
 
-        // GET: RestaurantUser/Restaurants/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null || _context.Restaurant == null)
-            {
-                return NotFound();
-            }
+		[HttpGet]
+		public async Task<IActionResult> UpdateInfo(Guid id)
+		{
+			var restaurant = await _context.Restaurant.FirstOrDefaultAsync(r => r.Id == id);
+			if (restaurant == null)
+			{
+				return NotFound();
+			}
 
-            var restaurant = await _context.Restaurant
-                .Include(r => r.Category)
-                .Include(r => r.City)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
+			return View(restaurant);
+		}
 
-            return View(restaurant);
-        }
-
-        // GET: RestaurantUser/Restaurants/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            var restaurant = await _context.Restaurant
-                                           .Include(r => r.RestaurantTags)
-                                           .Include(r => r.Images)
-                                           .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
-
-            // Lấy danh sách hình ảnh nhà hàng
-            var restaurantImages = restaurant.Images
-                                             .Where(img => img.ImageType == ImageType.RestaurantImage)
-                                             .ToList();
-
-            // Lấy danh sách hình ảnh menu
-            var menuImages = restaurant.Images
-                                       .Where(img => img.ImageType == ImageType.MenuImage)
-                                       .ToList();
-
-            // Chuyển đổi danh sách hình ảnh thành danh sách URL hình ảnh
-            var restaurantImageUrls = restaurantImages.Select(img => img.ImagePath).ToList();
-            var menuImageUrls = menuImages.Select(img => img.ImagePath).ToList();
-
-            // Lấy danh sách ID của tags
-            var currentTags = restaurant.RestaurantTags.Select(rt => rt.TagId).ToList();
-
-            // Gửi dữ liệu đến view thông qua ViewData
-            ViewData["CurrentRestaurantImages"] = restaurantImageUrls;
-            ViewData["CurrentMenuImages"] = menuImageUrls;
-            ViewData["CurrentTags"] = currentTags;
-            ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Name", restaurant.CategoryID);
-            ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Name", restaurant.CityID);
-            ViewData["Tags"] = _context.Tag.Where(t => t.TagType == TagType.Restaurant).ToList();
-
-            // Gửi model đến view
-            return View(restaurant);
-        }
-
-        // POST: RestaurantUser/Restaurants/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [FromForm] Restaurant restaurant, [FromForm] List<IFormFile> restaurantImages, [FromForm] List<IFormFile> menuImages, List<Guid> selectedTags)
-        {
-			
+		[HttpPost]
+		public async Task<IActionResult> UpdateInfo(Guid id, [FromForm] Restaurant restaurant)
+		{
 			if (id != restaurant.Id)
-            {
-                return NotFound();
-            }
+			{
+				return NotFound();
+			}
+
 			if (ModelState.IsValid)
-            {
-                try
-                {
-                    await UpdateImagesAsync(restaurant, restaurantImages, "resImages", ImageType.RestaurantImage);
+			{
+				try
+				{
+					var existingRestaurant = await _context.Restaurant.FindAsync(id);
 
-                    await UpdateImagesAsync(restaurant, menuImages, "menuImages", ImageType.MenuImage);
-
-                    // Cập nhật tags
-                    var existingTags = _context.RestaurantTag
-	                    .Where(rt => rt.RestaurantId == restaurant.Id && !selectedTags.Contains(rt.TagId))
-	                    .ToList();
-
-					foreach (var existingTag in existingTags)
+					if (existingRestaurant == null)
 					{
-						_context.RestaurantTag.Remove(existingTag);
+						return NotFound();
 					}
 
-					// Thêm mới những mối quan hệ
-					foreach (var tagId in selectedTags)
-					{
-						var restaurantTag = new RestaurantTag
-						{
-							RestaurantId = restaurant.Id,
-							TagId = tagId
-						};
+					existingRestaurant.Phone = restaurant.Phone;
+					existingRestaurant.Website = restaurant.Website;
+					existingRestaurant.Address = restaurant.Address;
 
-						_context.Update(restaurantTag);
+					_context.Update(existingRestaurant);
+					await _context.SaveChangesAsync();
+
+					return RedirectToAction("Index", "Home", new { area = "RestaurantUser" });
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!RestaurantExists(id))
+					{
+						return NotFound();
 					}
+					else
+					{
+						throw;
+					}
+				}
+			}
+
+			// Nếu ModelState không hợp lệ, trả về View để người dùng có thể sửa lỗi
+			return View(restaurant);
+		}
+
+		// GET: RestaurantUser/Restaurants/Edit/5
+		public async Task<IActionResult> Edit(Guid? id)
+		{
+			var restaurant = await _context.Restaurant
+										   .Include(r => r.RestaurantTags)
+										   .Include(r => r.Images)
+										   .FirstOrDefaultAsync(r => r.Id == id);
+
+			if (restaurant == null)
+			{
+				return NotFound();
+			}
+
+			// Lấy danh sách hình ảnh nhà hàng
+			var restaurantImages = restaurant.Images
+											 .Where(img => img.ImageType == ImageType.RestaurantImage)
+											 .ToList();
+
+			// Lấy danh sách hình ảnh menu
+			var menuImages = restaurant.Images
+									   .Where(img => img.ImageType == ImageType.MenuImage)
+									   .ToList();
+
+			// Chuyển đổi danh sách hình ảnh thành danh sách URL hình ảnh
+			var restaurantImageUrls = restaurantImages.Select(img => img.ImagePath).ToList();
+			var menuImageUrls = menuImages.Select(img => img.ImagePath).ToList();
+
+			// Lấy danh sách ID của tags
+			var currentTags = restaurant.RestaurantTags.Select(rt => rt.TagId).ToList();
+
+			// Gửi dữ liệu đến view thông qua ViewData
+			ViewData["CurrentRestaurantImages"] = restaurantImageUrls;
+			ViewData["CurrentMenuImages"] = menuImageUrls;
+			ViewData["CurrentTags"] = currentTags;
+			ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Name", restaurant.CategoryID);
+			ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Name", restaurant.CityID);
+			ViewData["Tags"] = _context.Tag.Where(t => t.TagType == TagType.Restaurant).ToList();
+
+			// Gửi model đến view
+			return View(restaurant);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(Guid id, [FromForm] Restaurant restaurant, [FromForm] List<IFormFile> restaurantImages, [FromForm] List<IFormFile> menuImages, List<Guid> selectedTags)
+		{
+			if (id != restaurant.Id)
+			{
+				return NotFound();
+			}
+
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					// Cập nhật hình ảnh
+					await UpdateImagesAsync(restaurant, restaurantImages, "resImages", ImageType.RestaurantImage);
+					await UpdateImagesAsync(restaurant, menuImages, "menuImages", ImageType.MenuImage);
+
+					// Cập nhật tags
+					await UpdateTagsAsync(restaurant, selectedTags);
 
 					_context.Update(restaurant);
-					_context.SaveChangesAsync();
+					_context.SaveChanges();
 				}
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RestaurantExists(restaurant.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+				catch (DbUpdateConcurrencyException)
+				{
+					throw;
+				}
+
 				return RedirectToAction("Index", "Home", new { area = "RestaurantUser" });
 			}
-            ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Id", restaurant.CategoryID);
-            ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Id", restaurant.CityID);
+			ViewData["CategoryID"] = new SelectList(_context.Category, "Id", "Id", restaurant.CategoryID);
+			ViewData["CityID"] = new SelectList(_context.Set<City>(), "Id", "Id", restaurant.CityID);
 			return View(restaurant);
 		}
 
 		private async Task UpdateImagesAsync(Restaurant restaurant, List<IFormFile> newImages, string subFolder, ImageType imageType)
 		{
-			var restaurantTask = _context.Restaurant
-	.Include(r => r.Images)
-	.FirstOrDefaultAsync(r => r.Id == restaurant.Id);
-
-            restaurant = restaurantTask.Result;
-			// Kiểm tra xem restaurant.Images có tồn tại không
-			if (restaurant.Images != null)
+			if (newImages.Count() != 0)
 			{
-				// Xóa tất cả hình ảnh của loại đã chọn
-				foreach (var existingImage in restaurant.Images.Where(i => i.ImageType == imageType).ToList())
+				var imagesToDelete = _context.Image
+					.Where(i => i.ImageType == imageType && i.RestaurantID == restaurant.Id)
+					.ToList();
+
+				foreach (var existingImage in imagesToDelete)
 				{
+					DeleteFile(existingImage.ImagePath);
 					_context.Image.Remove(existingImage);
-					DeleteFile(existingImage.ImagePath); // Hàm xóa file từ hệ thống tệp
 				}
-			}
 
-			// Lưu và liên kết các hình ảnh mới
-			foreach (var newImage in newImages)
-			{
-				var imagePath = await SaveFile(newImage, subFolder);
-
-				var image = new Image
+				// Lưu và liên kết các hình ảnh mới
+				foreach (var newImage in newImages)
 				{
-					Id = Guid.NewGuid(),
-					ImagePath = imagePath,
-					ImageType = imageType,
-					RestaurantID = restaurant.Id
-				};
+					var imagePath = await SaveFile(newImage, subFolder);
 
-				restaurant.Images.Add(image);
+					var image = new Image
+					{
+						ImagePath = imagePath,
+						ImageType = imageType,
+						RestaurantID = restaurant.Id
+					};
+
+					restaurant.Images.Add(image);
+				}
+
+				await _context.SaveChangesAsync();
 			}
-
-			// Lưu thay đổi vào cơ sở dữ liệu
-			_context.SaveChangesAsync();
 		}
+
+		private async Task UpdateTagsAsync(Restaurant restaurant, List<Guid> selectedTags)
+		{
+            // Xóa hết các mối quan hệ tags của nhà hàng đó
+            var existingTags = await _context.RestaurantTag
+                .Where(rt => rt.RestaurantId == restaurant.Id)
+                .ToListAsync();
+
+            _context.RestaurantTag.RemoveRange(existingTags);
+
+            // Thêm mới những mối quan hệ cho các tags được chọn
+            foreach (var tagId in selectedTags)
+            {
+                var restaurantTag = new RestaurantTag
+                {
+                    RestaurantId = restaurant.Id,
+                    TagId = tagId
+                };
+
+                _context.Update(restaurantTag);
+            }
+
+            await _context.SaveChangesAsync();
+        }
 
 		private async Task<string> SaveFile(IFormFile file, string subFolder)
 		{
@@ -229,30 +261,30 @@ namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ViewReviews(Guid restaurantId)
 		{
-            ViewData["RestaurantId"] = restaurantId;
-            // Lấy danh sách đánh giá cho nhà hàng
-            var reviews = await _context.Review
-                .Include(r => r.User)
-                .Where(r => r.RestaurantID == restaurantId)
-                .ToListAsync();
+			ViewData["RestaurantId"] = restaurantId;
+			// Lấy danh sách đánh giá cho nhà hàng
+			var reviews = await _context.Review
+				.Include(r => r.User)
+				.Where(r => r.RestaurantID == restaurantId)
+				.ToListAsync();
 
-            // Thêm danh sách đánh giá vào ViewData
-            ViewData["Reviews"] = reviews;
+			// Thêm danh sách đánh giá vào ViewData
+			ViewData["Reviews"] = reviews;
 
-            var replyDictionary = new Dictionary<Guid, List<Reply>>();
+			var replyDictionary = new Dictionary<Guid, List<Reply>>();
 
-            foreach (var review in reviews)
-            {
-                var replies = await _context.Reply
-                    .Where(r => r.ReviewID == review.Id)
-                    .ToListAsync();
+			foreach (var review in reviews)
+			{
+				var replies = await _context.Reply
+					.Where(r => r.ReviewID == review.Id)
+					.ToListAsync();
 
-                replyDictionary.Add(review.Id, replies);
-            }
+				replyDictionary.Add(review.Id, replies);
+			}
 
-            ViewData["Replies"] = replyDictionary;
+			ViewData["Replies"] = replyDictionary;
 
-            return View();
+			return View();
 		}
 
 		[HttpPost]
@@ -275,13 +307,13 @@ namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 
 				// Gán ReviewID cho reply
 				reply.ReviewID = reviewId;
-                reply.ReplyAt = DateTime.Now;
+				reply.ReplyAt = DateTime.Now;
 				// Thêm reply vào cơ sở dữ liệu
 				_context.Reply.Add(reply);
 				await _context.SaveChangesAsync();
 
-                return RedirectToAction("ViewReviews", "Restaurants", new { area = "RestaurantUser", restaurantId = restaurantId });
-            }
+				return RedirectToAction("ViewReviews", "Restaurants", new { area = "RestaurantUser", restaurantId = restaurantId });
+			}
 			catch (Exception ex)
 			{
 				// Xử lý lỗi ở đây
@@ -290,8 +322,8 @@ namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 		}
 
 		private bool RestaurantExists(Guid id)
-        {
-          return (_context.Restaurant?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-    }
+		{
+			return (_context.Restaurant?.Any(e => e.Id == id)).GetValueOrDefault();
+		}
+	}
 }

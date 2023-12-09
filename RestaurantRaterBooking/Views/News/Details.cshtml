@@ -45,11 +45,11 @@
 
 <section class="blog-details-page pt-80">
     <div class="container">
-        <div class="blog-details-content text-center">
+        <div class="blog-details-content">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <ul class="blog-meta">
-                        <li><a href="#">By <span> Jon Smith</span></a></li>
+                        <li><a href="#">By <span> @Model.CreatedBy</span></a></li>
                         <li><a href="#"><i class="fal fa-clock"></i> @Model.CreatedAt</a></li>
                         <li><a href="#"><span>Photography</span></a></li>
                     </ul>
@@ -108,7 +108,7 @@
                             </ul>
                             <h4 class="title"><a asp-controller="News" asp-action="Details" asp-route-id="@news.Id">@news.Title</a></h4>
                             <ul class="blog-meta">
-                                <li><a asp-controller="News" asp-action="Details" asp-route-id="@news.Id">By <span> Jon Smith</span></a></li>
+                                <li><a asp-controller="News" asp-action="Details" asp-route-id="@news.Id">By <span> @Model.CreatedBy</span></a></li>
                                 <li><a asp-controller="News" asp-action="Details" asp-route-id="@news.Id"><i class="fal fa-clock"></i> @news.CreatedAt</a></li>
                             </ul>
                         </div>

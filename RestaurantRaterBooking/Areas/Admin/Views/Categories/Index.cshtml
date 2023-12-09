@@ -5,24 +5,41 @@
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+@section head_scripts {
+	<ul class="navbar-nav">
+		<li class="nav-item">
+			<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link">Quản lý nhà hàng</a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a class="nav-link"><i class="fas fa-angle-right"></i></a>
+		</li>
+		<li class="nav-item d-none d-sm-inline-block">
+			<a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link">Danh mục nhà hàng</a>
+		</li>
+	</ul>
+}
+
+<h1 class="text-center mb-2">Danh sách danh mục</h1>
 
 <p>
-	<a asp-action="Create">Create New</a>
+	<a class="btn btn-primary ml-3" href="#" id="createCategory" data-toggle="modal" data-target="#createCategoryModal">Create New</a>
 </p>
 <table class="table">
 	<thead>
 		<tr>
-			<th>
-				#
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Image)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Name)
-			</th>
-			<th></th>
+			<th class="col-2">STT</th>
+			<th class="col-3">Hình ảnh</th>
+			<th class="col-4">Tên danh mục</th>
+			<th class="col-3"></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -42,12 +59,360 @@
 					@Html.DisplayFor(modelItem => item.Name)
 				</td>
 				<td>
-					<a class="btn btn-outline-success mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-					<a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+					<a class="btn btn-outline-primary editButton"
+					   data-toggle="modal"
+					   data-target="#editCategoryModal"
+					   data-id="@item.Id"
+					   data-name="@item.Name"
+					   data-image="@item.Image">Sửa</a>
+					<a class="btn btn-outline-danger deleteButton" href="#" data-toggle="modal" data-target="#deleteConfirmationModal" data-id="@item.Id">Xóa</a>
 				</td>
 			</tr>
 			i++;
 		}
 	</tbody>
 </table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Modal for create -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Create Category</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form asp-action="Create" enctype="multipart/form-data">
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="form-group">
+						<label for="Name">Name</label>
+						<input type="text" class="form-control" id="Name" name="Name" required>
+					</div>
+					<div class="form-group">
+						<label for="CoverImage" class="control-label">Hình ảnh</label>
+						<div class="input-group">
+							<input for="CoverImage" name="CoverImage" type="file" class="form-control" id="fileInput" style="display: none;" onchange="displaySelectedImage()" />
+							<input type="text" class="form-control" readonly id="fileName" />
+							<div class="input-group-append">
+								<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
+							</div>
+						</div>
+						<div class="mt-2 text-center">
+							<img id="selectedImage" style="max-width: 30%;" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" value="Create" class="btn btn-primary" />
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.getElementById('fileInput').addEventListener('change', function () {
+		document.getElementById('fileName').value = this.files[0].name;
+	});
+
+	$(document).ready(function () {
+		$("#createCategoryForm").submit(function (e) {
+			e.preventDefault();
+
+			var formData = new FormData($(this)[0]);
+
+			$.ajax({
+				type: 'POST',
+				url: '@Url.Action("Create", "Categories")',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+					// Xử lý sau khi tạo thành công
+					$('#createCategoryModal').modal('hide');
+					location.reload();
+				},
+				error: function (xhr, status, error) {
+					// Xử lý khi có lỗi
+					console.error(xhr.responseText);
+				}
+			});
+		});
+
+		$("#fileInput").change(function () {
+			displaySelectedImage();
+		});
+
+		function displaySelectedImage() {
+			var input = document.getElementById('fileInput');
+			var fileName = document.getElementById('fileName');
+			var selectedImage = document.getElementById('selectedImage');
+
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					selectedImage.src = e.target.result;
+				};
+
+				reader.readAsDataURL(input.files[0]);
+				fileName.value = input.files[0].name;
+			}
+		}
+	});
+</script>
+
+@* <!-- Modal for Edit -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form asp-action="Edit" enctype="multipart/form-data">
+					<input type="hidden" id="editId" name="Id" />
+					<div class="form-group">
+						<label for="editName">Name</label>
+						<input type="text" class="form-control" id="editName" name="Name" />
+					</div>
+					<div class="form-group">
+						<label for="CoverImage" class="control-label"></label>
+						<img id="currentImage" name="CoverImage" src="" style="max-width: 100px; max-height: 100px;" />
+						<div class="input-group">
+							<input for="CoverImage" name="CoverImage2" type="file" class="form-control" id="fileInput" style="display: none;" onchange="displaySelectedImage()" />
+							<input type="text" class="form-control" name="CoverImagePath" readonly id="currentImagePath" />
+							<div class="input-group-append">
+								<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Save Changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function displaySelectedImage() {
+		var fileInput = document.getElementById('fileInput');
+		var currentImage = document.getElementById('currentImage');
+		var currentImagePath = document.getElementById('currentImagePath');
+
+		var selectedFile = fileInput.files[0];
+		if (selectedFile) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				currentImage.src = e.target.result;
+			};
+			reader.readAsDataURL(selectedFile);
+
+			currentImagePath.value = selectedFile.name;
+		}
+	}
+
+	$(document).ready(function () {
+		$('.editButton').click(function () {
+			var id = $(this).data('id');
+			var name = $(this).data('name');
+			var currentImage = $(this).data('image');
+
+			$('#editId').val(id);
+			$('#editName').val(name);
+			$('#currentImage').attr('src', currentImage);
+			$('#currentImagePath').val(currentImage);
+			$('#editCategoryModal').modal('show');
+		});
+
+		$('#fileInput').change(displaySelectedImage);
+
+		$('#editCategoryForm').submit(function (e) {
+			e.preventDefault();
+
+			var formData = new FormData();
+			formData.append('Id', $('#editId').val());
+			formData.append('Name', $('#editName').val());
+			formData.append('CoverImage', $('#fileInput')[0].files[0]);
+			console.log("in"+formData);
+			$.ajax({
+				type: 'POST',
+				url: '/Categories/Edit',
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (data) {
+					$('#editCategoryModal').modal('hide');
+					location.reload();
+				},
+				error: function (xhr, status, error) {
+					console.error(xhr.responseText);
+				}
+			});
+		});
+	});
+</script> *@
+
+<!-- Modal for Edit -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form asp-action="Edit" enctype="multipart/form-data" id="editCategoryForm">
+					<input type="hidden" id="editId" name="Id" />
+					<div class="form-group">
+						<label for="editName">Name</label>
+						<input type="text" class="form-control" id="editName" name="Name" />
+					</div>
+					<div class="form-group">
+						<label for="CoverImage" class="control-label">Hình ảnh</label>
+						<div class="input-group">
+							<input type="file" class="form-control" id="fileInput" style="visibility: hidden; position: absolute;" />
+							<input type="text" class="form-control" name="CoverImage" id="currentImagePath" readonly />
+							<div class="input-group-append">
+								<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
+							</div>
+						</div>
+						<div class="text-center mt-2">
+							<img id="currentImage" src="" style="max-width: 100px; max-height: 100px;" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Save Changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('.editButton').click(function () {
+			var id = $(this).data('id');
+			var name = $(this).data('name');
+			var currentImage = $(this).data('image');
+
+			$('#editId').val(id);
+			$('#editName').val(name);
+			$('#currentImage').attr('src', currentImage);
+			$('#currentImagePath').val(currentImage);
+			$('#editCategoryModal').modal('show');
+		});
+
+		function displaySelectedImage() {
+			var fileInput = $('#fileInput')[0];
+			var currentImage = document.getElementById('currentImage');
+			var currentImagePath = document.getElementById('currentImagePath');
+			var selectedFile = fileInput.files[0];
+			if (selectedFile) {
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					currentImage.src = e.target.result;
+				};
+				reader.readAsDataURL(selectedFile);
+
+				currentImagePath.value = selectedFile.name;
+			}
+			console.log(currentImagePath.value);
+		}
+
+		$('#fileInput').change(displaySelectedImage);
+
+		$('#editCategoryForm').submit(function (e) {
+			e.preventDefault();
+
+			var formData = new FormData(document.getElementById('editCategoryForm'));
+			console.log(Array.from(formData));
+			$.ajax({
+				type: 'POST',
+				url: 'Categories/Edit/' + $('#editId').val(),
+				// data: {
+				// 	Id: $('#editId').val(),
+				// 	Name: $('#editName').val(),
+				// 	CoverImage: $('#fileInput')[0].files[0]
+				// },
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (data) {
+					$('#editCategoryModal').modal('hide');
+					location.reload();
+				},
+				error: function (xhr, status, error) {
+					console.error(xhr.responseText);
+				}
+			});
+		});
+	});
+</script>
+
+<!-- Modal for delete -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteConfirmationModalLabel">Xác nhận xóa</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Bạn có chắc chắn muốn xóa danh mục này không?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+				<button type="button" class="btn btn-danger" id="confirmDeleteButton">Xóa</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	var categoriesIdToDelete;
+	$(document).ready(function () {
+		// Hiển thị modal xóa
+		$('.deleteButton').click(function () {
+			categoriesIdToDelete = $(this).data('id');
+			$('#deleteConfirmationModal').modal('show');
+		});
+
+		// Xóa nhà hàng khi nhấn nút "Xóa" trên modal
+		$('#confirmDeleteButton').click(function () {
+			var url = '/Admin/Categories/Delete/' + categoriesIdToDelete;
+
+			$.ajax({
+				type: "POST",
+				url: url,
+				headers: {
+					RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+				},
+				success: function (data) {
+					// Xử lý khi xóa thành công
+					alert("Đã xóa thành công");
+					location.reload();
+				},
+				error: function (data) {
+					// Xử lý khi xóa thất bại
+					alert("Xóa thất bại");
+				}
+			});
+		});
+	});
+</script>
 

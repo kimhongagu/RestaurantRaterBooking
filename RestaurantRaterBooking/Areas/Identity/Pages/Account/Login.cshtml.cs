@@ -23,15 +23,18 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly Models.AppContext _context;
 
 		public LoginModel(SignInManager<ApplicationUser> signInManager,
 			UserManager<ApplicationUser> userManager,
-            ILogger<LoginModel> logger)
+            ILogger<LoginModel> logger,
+			Models.AppContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userManager = userManager;
-        }
+			_context = context;
+		}
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -120,14 +123,40 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(Input.Email);
-					if (user != null && user.IsRestaurantAccount)
-					{
-						return RedirectToAction("Index", "Home", new { area = "RestaurantUser" });
-					}
+					var roles = _context.UserRoles.Where(u => u.UserId == user.Id).Select(ur => ur.RoleId).ToList();
 
-					_logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    if (user.EmailConfirmed == false)
+                    {
+                        _logger.LogWarning("User account locked out.");
+                        return RedirectToPage("./Lockout");
+                    }
+                    else
+                    {
+                        if (user.LockoutEnabled == true)
+                        {
+                            if (user != null && roles.Contains("435c8ecf-0069-4019-8562-13166c585a16"))
+                            {
+                                return RedirectToAction("Index", "Home", new { area = "RestaurantUser" });
+                            }
+                            else if (roles.Contains("7715b01e-3872-4559-b05b-185dc0625f41"))
+                            {
+                                return RedirectToAction("Index", "Home", new { area = "Admin" });
+                            }
+                            else
+                            {
+                                _logger.LogInformation("User logged in.");
+                                return LocalRedirect(returnUrl);
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarning("User account locked out.");
+                            return RedirectToPage("./Lockout");
+                        }
+                    }
+					
                 }
+                
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });

@@ -3,16 +3,58 @@
 
 @inject SignInManager<RestaurantRaterBooking.Models.ApplicationUser> SignInManager
 @inject UserManager<RestaurantRaterBooking.Models.ApplicationUser> UserManager
+<style>
+	.dropdown:hover > .dropdown-menu {
+		display: block;
+		left: auto !important;
+		right: 0 !important;
+	}
 
+	.dropdown-toggle.btn {
+		background-color: transparent;
+		border: none;
+	}
+
+	.dropdown-toggle:after {
+		content: none;
+		
+	}
+</style>
 @if (SignInManager.IsSignedIn(User))
 {
-	<div class="flex-grow-1" style="margin-right: 15px">
-		<a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="fas fa-user"></i></a>
-	</div>
-	<div class="flex-grow-1">
-		<form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-			<button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0"><i class="fas fa-sign-out-alt"></i> Logout</button>
-		</form>
+	<div class="dropdown mr-3">
+		<button class="dropdown-toggle btn p-0" type="button" id="dropdownMenuButton" data-mdb-toggle="dropdown" aria-expanded="false">
+			<a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="fas fa-user"></i></a>
+		</button>
+		<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+			<li><a class="dropdown-item" id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Thông tin tài khoản</a></li>
+			@{
+				var user = await UserManager.GetUserAsync(User);
+				if (user != null)
+				{
+					var roles = await UserManager.GetRolesAsync(user);
+					var rolesString = string.Join(", ", roles);
+
+					if (roles.Contains("Admin"))
+					{
+						<li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Giao diện quản lí</a></li>
+					}
+					else if (roles.Contains("Restaurant"))
+					{
+						<li><a class="dropdown-item" asp-area="RestaurantUser" asp-controller="Home" asp-action="Index">Quản lí nhà hàng</a></li>
+					}
+					else
+					{
+						<li><a class="dropdown-item" asp-area="" asp-controller="Bookings" asp-action="BookingList">Lịch sử đặt bàn</a></li>
+					}
+				}
+			}
+			<li>
+				<form id="logoutForm" class="form-inline dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+					<button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Đăng xuất</button>
+				</form>
+			</li>
+		</ul>
 	</div>
 }
 else

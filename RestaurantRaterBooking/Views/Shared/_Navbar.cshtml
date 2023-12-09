@@ -16,12 +16,16 @@
 					
 					<li class="static">
 						<a href="#">Danh mục</a>
+						<ul class="sub-menu sub-mega-menu flex-wrap">
 						@await Component.InvokeAsync("CategoryMenu")
+						</ul>
 					</li>
 
 					<li>
 						<a href="#">Blog</a>
+						<ul class="sub-menu">
 						@await Component.InvokeAsync("BlogMenu")
+						</ul>
 					</li>
 
 					<li>

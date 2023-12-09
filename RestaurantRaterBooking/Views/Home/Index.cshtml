@@ -7,6 +7,10 @@
 	var sliders = ViewData["Sliders"] as List<Slider>;
 }
 <style>
+	.nav-item:hover .image-hover {
+		border-color: #ef5619;
+	}
+
 	.pagination .page-item.active .page-link {
 		background-color: black !important;
 		border-color: black !important;
@@ -19,24 +23,6 @@
 		justify-content: center;
 		text-align: center !important;
 	}
-
-	.star-container {
-		display: flex;
-		align-items: center;
-	}
-
-	.title {
-		margin-right: 5px;
-	}
-
-	.star {
-		color: #ccc; /* Màu xám cho ngôi sao chưa được đánh giá */
-	}
-
-	.star-fill {
-		color: gold; /* Màu vàng cho ngôi sao được đánh giá */
-	}
-
 </style>
 
 <!--====== Slider Start ======-->
@@ -112,7 +98,7 @@
 						<li class="nav-item">
 							<a asp-area="" asp-controller="Categories" asp-action="Index" asp-route-id="@category.Id" class="nav-link">
 								<div class="row align-items-center">
-									<img style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; border: 1px solid black;" src="@category.Image" alt="@category.Name" class="mx-auto d-block mb-2">
+									<img style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; border: 1px solid black;" src="@category.Image" alt="@category.Name" class="mx-auto d-block mb-2 image-hover">
 									<span class="text-center">@category.Name</span>
 								</div>
 							</a>
@@ -133,19 +119,16 @@
 							<div class="single-product mt-50">
 								<div class="product-image">
 									<div class="image">
-										@* <img class="product-1" src="assets/images/product/product-89.jpg" alt="product"> *@
 										<img class="product-1" style="height: 300px; object-fit: cover; object-position: center; " src="~/@restaurantImage">
 										<a class="link" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"></a>
 									</div>
 									<ul class="product-meta text-center">
 										<li><a data-bs-tooltip="tooltip" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"><i class="fal fa-search-plus"></i></a></li>
-										@* <li><a data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Wishlist" href="#"><i class="fal fa-heart"></i></a></li> *@
-										@* data-bs-placement="top" title="Quick Shop" data-bs-toggle="modal" data-bs-target="#productQuick" *@
 									</ul>
 								</div>
 								<div class="product-content d-flex flex-column align-items-center">
 									<div class="mb-2 product-title">
-										<h4 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id">@restaurant.Name</a></h4>
+										<h3 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id">@restaurant.Name</a></h3>
 									</div>
 									<div class="d-flex align-items-center">
 										<h4 class="title">@restaurant.AverageRating</h4>
@@ -154,20 +137,18 @@
 											{
 												if (i <= restaurant.AverageRating)
 												{
-													<i class="fas fa-star star-fill"></i>
+													<i class="fas fa-star star-fill" style="color: #ffd700;"></i>
 												}
-												else if (i - 1 < restaurant.AverageRating)
+												else if (i - 0.5 <= restaurant.AverageRating)
 												{
 													<i class="fas fa-star-half-alt" style="color: #ffd700;"></i>
 												}
 												else
 												{
-													<i class="fas fa-star" style="color: #ffd700;"></i>
+													<i class="fas fa-star" style="color: #d3d3d3;"></i>
 												}
 											}
-											@* <div class="star-inner">&#9733;&#9733;&#9733;&#9733;&#9733;</div> *@
 										</div>
-
 									</div>
 								</div>
 							</div>
@@ -177,7 +158,7 @@
 			</div>
 		</div>
 
-		<div class="pagination-items pt-120">
+		<div class="pagination-items pt-50">
 			<ul class="pagination justify-content-center">
 				@if (pagedListRestaurants.HasPreviousPage)
 				{
@@ -262,7 +243,7 @@
 <!--====== Counter Ends ======-->
 <!--====== Blog Start ======-->
 
-<section class="blog-area pt-75 pb-80">
+<section class="blog-area pt-50 pb-50">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
@@ -289,7 +270,7 @@
 						<div class="blog-content text-center">
 							<h4 class="title"><a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id">@blog.Title</a></h4>
 							<ul class="blog-meta">
-								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#">By <span> @blog.CreatedBy</span></a></li>
 								<li><a href="#"><i class="fal fa-clock"></i> @blog.CreatedAt</a></li>
 							</ul>
 						</div>
@@ -304,7 +285,7 @@
 <!--====== Blog Ends ======-->
 <!--====== News Start ======-->
 
-<section class="blog-area pt-75 pb-80">
+<section class="blog-area pt-50 pb-50">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
@@ -331,7 +312,7 @@
 						<div class="blog-content text-center">
 							<h4 class="title"><a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h4>
 							<ul class="blog-meta">
-								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#">By <span> @item.CreatedBy</span></a></li>
 								<li><a href="#"><i class="fal fa-clock"></i> @item.CreatedAt</a></li>
 							</ul>
 						</div>

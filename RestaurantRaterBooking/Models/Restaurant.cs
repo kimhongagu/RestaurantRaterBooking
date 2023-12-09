@@ -80,5 +80,6 @@ namespace RestaurantRaterBooking.Models
 
 		//public ICollection<Tag>? Tags { get; set; }
 		public ICollection<RestaurantTag>? RestaurantTags { get; set; }
+
 	}
 }

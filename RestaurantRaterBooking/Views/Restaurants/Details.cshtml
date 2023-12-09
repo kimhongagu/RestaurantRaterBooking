@@ -87,60 +87,151 @@
 
 				</div>
 			</div>
+
 			<div class="col-lg-6">
 				<div class="product-simple-details mt-50">
 					<h4 class="title">@Model.Name</h4>
 					<p class="sku-id">@Model.Address</p>
 
 					<p class="review">
-						<i class="fas fa-star review-on"></i>
-						<i class="fas fa-star review-on"></i>
-						<i class="fas fa-star review-on"></i>
-						<i class="fas fa-star review-on"></i>
-						<i class="fas fa-star review-on"></i>
-						<a href="#">(3 customer reviews)</a>
+						@for (var i = 1; i <= 5; i++)
+						{
+							if (i <= Model.AverageRating)
+							{
+								<i class="fas fa-star star-fill" style="color: #ffd700;"></i>
+							}
+							else if (i - 0.5 <= Model.AverageRating)
+							{
+								<i class="fas fa-star-half-alt" style="color: #ffd700;"></i>
+							}
+							else
+							{
+								<i class="fas fa-star" style="color: #d3d3d3;"></i>
+							}
+						}
+						<span class="ml-3 text-dark">@Model.AverageRating</span>
 					</p>
 
+					<p class="product-description pt-0">Thời gian: @Model.OpeningHour - @Model.ClosingHour</p>
+					<p class="product-description pt-0 mt-0">Loại hình: <a href="">@Model.Category.Name</a></p>
 					<div class="product-quantity-cart-wishlist-compare flex-wrap">
 						<form action="#">
 							<div class="product-cart">
-								<button class="main-btn">Book a table</button>
+								<a class="main-btn text-white text-decoration-none" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Book a table</a>
 							</div>
 						</form>
 						<a href="#" data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Wishlist" class="product-wishlist"><i class="far fa-heart"></i></a>
 					</div>
 
 					<div class="product-description">
-						<p>Ưu đãi: @Model.Offer</p>
-						<p>Đặc trưng: @Model.SpecialFeature </p>
-						<p>Không gian: @Model.Space </p>
-						<p>Chỗ đỗ xe: @Model.ParkingSpace</p>
+						<p style="color:#ef5619; font-size: 15px;">Các ưu đãi</p>
+						<p>@Html.Raw(Model.Offer)</p>
+
+						<p style="color:#ef5619; font-size: 15px;">Không gian</p>
+						<p>@Html.Raw(Model.Space)</p>
+
+						<p style="color:#ef5619; font-size: 15px;">Phù hợp</p>
+						<p>@Html.Raw(Model.SuitableFor)</p>
+
+						<p style="color:#ef5619; font-size: 15px;">Chỗ để xe</p>
+						<p>@Html.Raw(Model.ParkingSpace)</p>
+
+						<p class="text-danger" style="font-size: 15px;">* Lưu ý</p>
+						<p>@Html.Raw(Model.Note)</p>
 					</div>
 
-					<div class="product-meta">
-						<p>Categories: <a href="">@Model.Category.Name</a></p>
-						<p>
-							Tags:
-							@foreach (var item in Model.RestaurantTags)
-							{
-								<span class="badge bg-secondary text-white" href="#">@item.Tag.Name</span>
-							}
-						</p>
-					</div>
-
-					<div class="product-share">
-						<ul class="social">
-							<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-							<li><a href="#"><i class="fab fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fab fa-linkedin"></i></a></li>
-							<li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
-						</ul>
-					</div>
 				</div>
 			</div>
 		</div>
+
 		<div class="row">
-			<div class="col-lg-6"></div>
+			<div class="col-lg-6">
+				<div class="product-discription">
+					<p style="color:#ef5619; font-size: 15px;">Món đặc sắc</p>
+					<p>@Html.Raw(Model.SpecialDish)</p>
+
+					<p style="color:#ef5619; font-size: 15px;">Điểm đặc trưng</p>
+					<p>@Html.Raw(Model.SpecialFeature)</p>
+
+					<p class="mt-3" style="color:#ef5619; font-size: 15px;">Các tiện ích khác</p>
+					@{
+						Func<bool, string> displayIcon = value => value ? "<i class='fas fa-check' style='color: green;'></i>" : "<i class='fas fa-times' style='color: #ef5619;'></i>";
+					}
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.ChildrenChair))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.ChildrenChair)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.Wifi))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.Wifi)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.AirConditioning))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.AirConditioning)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.VisaMasterCard))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.VisaMasterCard)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.VATInvoice))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.VATInvoice)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.PrivateRoom))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.PrivateRoom)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.ChildrenPlayArea))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.ChildrenPlayArea)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.SmokiingArea))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.SmokiingArea)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.DirectBill))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.DirectBill)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.Karaoke))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.Karaoke)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.Projector))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.Projector)</span>
+						</div>
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.EnventDecoration))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.EnventDecoration)</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							@Html.Raw(displayIcon(Model.OutdoorTable))
+							<span class="ml-10">@Html.DisplayNameFor(model => model.OutdoorTable)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="col-lg-6">
 				<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 					<div class="carousel-inner">
@@ -162,6 +253,25 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="row">
+			<p class="product-description">
+				Tags:
+				@foreach (var item in Model.RestaurantTags)
+				{
+					<span class="badge bg-secondary text-white" href="#">@item.Tag.Name</span>
+				}
+			</p>
+			<div class="product-share">
+				<ul class="social">
+					<a href="#"><i class="fab fa-facebook-f"></i></a>
+					<a href="#"><i class="fab fa-twitter"></i></a>
+					<a href="#"><i class="fab fa-linkedin"></i></a>
+					<a href="#"><i class="fab fa-pinterest-p"></i></a>
+				</ul>
+			</div>
+		</div>
+	</div>
 </section>
 
 <!--====== Product Simple Ends ======-->
@@ -183,37 +293,6 @@
 				<div class="row justify-content-center">
 					<div class="col-lg-8">
 						<div class="product-review pt-20">
-							@* <div class="review-comment">
-							<ul class="comment">
-							@foreach (var item in reviews)
-							{
-							<li>
-							<div class="single-review-comment">
-							<div class="review-author">
-							<img src="/assets/images/auhtor-1.jpg" alt="">
-							</div>
-							<div class="review-content">
-							<div class="review-name-rating mt-0">
-							<div class="col">
-							<h6 class="review-name">@item.User?.UserName</h6>
-							<ul class="review-rating">
-							@for (int i = 1; i <= 5; i++)
-							{
-							<li class="@(i <= item.Rating ? "rating-on" : "rating-off")">
-							<i class="fas fa-star"></i>
-							</li>
-							}
-							</ul>
-							</div>
-							<p class="review-created-at">@item.CreatedAt.ToString("dd/MM/yyyy")</p>
-							</div>
-							<p style="white-space: pre-line;">"@item.Comment"</p>
-							</div>
-							</div>
-							</li>
-							}
-							</ul>
-							</div> *@
 							<div class="review-comment">
 								<ul class="comment">
 									@foreach (var item in reviews)
@@ -355,6 +434,83 @@
 </section>
 
 <!--====== Related Products Ends ======-->
+<!--====== Book a table Start ======-->
+
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-lg" style="width: 40%;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-danger">Đặt bàn</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form asp-controller="Restaurants" asp-action="BookTable" method="post">
+				<input type="hidden" name="restaurantId" value="@Model.Id" />
+				<div class="modal-body">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Người lớn:</label>
+									<input type="number" id="adults" name="adults" class="form-control" required>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Trẻ em:</label>
+									<input type="number" id="children" name="children" class="form-control" required>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="reservationDate">Ngày đến:</label>
+									<input type="date" id="bookingDate" name="bookingDate" class="form-control" required>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="reservationTime">Giờ đến:</label>
+									<input type="time" id="bookingTime" name="bookingTime" class="form-control" required>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="reservationDate">Họ và tên:</label>
+									<input type="text" id="name" name="name" class="form-control" required>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="reservationTime">Số điện thoại:</label>
+									<input type="text" id="phomeNumber" name="phoneNumber" class="form-control" required>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="form-group">
+								<lable>Ghi chú</lable>
+								<textarea name="note" class="form-control"></textarea>
+							</div>
+						</div>
+					</div>
+					<p class="text-danger">*Lưu ý: Phí cho mỗi lượt đặt bàn là 100.000đ</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" onclick="submitReservation()">Đặt bàn</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!--====== Book a table Ends ======-->
+
 <section>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
 	<link href="~/css/rating.css" rel="stylesheet" />
@@ -367,5 +523,6 @@
 		id && (document.getElementById(id).checked = !0)
 	}
 </script>
+
 
 
