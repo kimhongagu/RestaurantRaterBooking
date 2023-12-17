@@ -25,7 +25,7 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
         // GET: Admin/Tags
         public async Task<IActionResult> Index(string searchText, int? page)
         {
-			int pageSize = 5;
+			int pageSize = 20;
 			int pageNumber = page ?? 1;
 
 			IEnumerable<Tag> appContext = _context.Tag;

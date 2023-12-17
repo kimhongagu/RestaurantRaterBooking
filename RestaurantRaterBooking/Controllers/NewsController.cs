@@ -21,7 +21,7 @@ namespace RestaurantRaterBooking.Controllers
         // GET: News
         public async Task<IActionResult> Index()
         {
-            var appContext = _context.News.Include(n => n.PostCategory);
+            var appContext = _context.News.Include(n => n.PostCategory).Where(n => n.IsPublish == true);
             return View(await appContext.ToListAsync());
         }
 
@@ -37,7 +37,8 @@ namespace RestaurantRaterBooking.Controllers
                 .Include(n => n.PostCategory)
                 .Include(n => n.NewsTags)
                 .ThenInclude(nt => nt.Tag)
-                .FirstOrDefaultAsync(m => m.Id == id);
+				.Where(n => n.IsPublish == true)
+				.FirstOrDefaultAsync(m => m.Id == id);
             if (news == null)
             {
                 return NotFound();
@@ -46,14 +47,14 @@ namespace RestaurantRaterBooking.Controllers
             // Lấy danh sách các bài viết có cùng danh mục
             var relatedNewsByCategory = await _context.News
                 .Include(n => n.PostCategory)
-                .Where(n => n.PostCategoryID == news.PostCategoryID && n.Id != news.Id)
+                .Where(n => n.PostCategoryID == news.PostCategoryID && n.Id != news.Id && n.IsPublish == true)
                 .Take(3)
                 .ToListAsync();
 
             // Lấy danh sách các bài viết khác không cùng danh mục
             var relatedNewsNotByCategory = await _context.News
                 .Include(n => n.PostCategory)
-                .Where(n => n.PostCategoryID != news.PostCategoryID && n.Id != news.Id)
+                .Where(n => n.PostCategoryID != news.PostCategoryID && n.Id != news.Id && n.IsPublish == true)
                 .Take(3)
                 .ToListAsync();
 
@@ -71,115 +72,6 @@ namespace RestaurantRaterBooking.Controllers
         {
             ViewData["PostCategoryID"] = new SelectList(_context.PostCategory, "Id", "Id");
             return View();
-        }
-
-        // POST: News/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ShortContent,Content,Image,IsPublish,IsHot,Alias,CreatedAt,CreatedBy,EditedAt,EditedBy,PostCategoryID")] News news)
-        {
-            if (ModelState.IsValid)
-            {
-                news.Id = Guid.NewGuid();
-                _context.Add(news);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["PostCategoryID"] = new SelectList(_context.PostCategory, "Id", "Id", news.PostCategoryID);
-            return View(news);
-        }
-
-        // GET: News/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null || _context.News == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _context.News.FindAsync(id);
-            if (news == null)
-            {
-                return NotFound();
-            }
-            ViewData["PostCategoryID"] = new SelectList(_context.PostCategory, "Id", "Id", news.PostCategoryID);
-            return View(news);
-        }
-
-        // POST: News/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,ShortContent,Content,Image,IsPublish,IsHot,Alias,CreatedAt,CreatedBy,EditedAt,EditedBy,PostCategoryID")] News news)
-        {
-            if (id != news.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(news);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NewsExists(news.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["PostCategoryID"] = new SelectList(_context.PostCategory, "Id", "Id", news.PostCategoryID);
-            return View(news);
-        }
-
-        // GET: News/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.News == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _context.News
-                .Include(n => n.PostCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (news == null)
-            {
-                return NotFound();
-            }
-
-            return View(news);
-        }
-
-        // POST: News/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            if (_context.News == null)
-            {
-                return Problem("Entity set 'AppContext.News'  is null.");
-            }
-            var news = await _context.News.FindAsync(id);
-            if (news != null)
-            {
-                _context.News.Remove(news);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool NewsExists(Guid id)

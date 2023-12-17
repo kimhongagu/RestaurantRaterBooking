@@ -203,7 +203,10 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 
 				foreach (var existingImage in imagesToDelete)
 				{
-					DeleteFile(existingImage.ImagePath);
+					if (!existingImage.ImagePath.Contains("NoImage"))
+					{
+						DeleteFile(existingImage.ImagePath);
+					}
 					_context.Image.Remove(existingImage);
 				}
 

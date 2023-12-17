@@ -39,6 +39,8 @@ public class AppContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<RestaurantRaterBooking.Models.PostCategory> PostCategory { get; set; } = default!;
 
+    public DbSet<RestaurantRaterBooking.Models.City> City { get; set; } = default!;
+
     public DbSet<RestaurantRaterBooking.Models.Restaurant> Restaurant { get; set; } = default!;
 
     public DbSet<RestaurantRaterBooking.Models.Image> Image { get; set; } = default!;

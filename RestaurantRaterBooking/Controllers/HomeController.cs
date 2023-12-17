@@ -18,7 +18,7 @@ namespace RestaurantRaterBooking.Controllers
 		}
 		public async Task<IActionResult> Index(int? page)
 		{
-			int pageSize = 4;
+			int pageSize = 8;
 			int pageNumber = (page ?? 1);
 
 			IEnumerable<Restaurant> restaurants = _context.Restaurant
@@ -36,15 +36,23 @@ namespace RestaurantRaterBooking.Controllers
 
 			ViewData["Blogs"] = _context.Blog.Include(b => b.PostCategory)
 								.OrderByDescending(b => b.CreatedAt)
+								.Where(b => b.IsPublish == true)
 								.Take(2)
 								.ToList();
 			ViewData["News"] = _context.News.Include(n => n.PostCategory)
-								.OrderByDescending(b => b.CreatedAt)
+								.OrderByDescending(n => n.CreatedAt)
+								.Where(n => n.IsPublish == true)
 								.Take(2)
 								.ToList();
 			ViewData["Categories"] = _context.Category.ToList();
+			ViewData["Cites"] = _context.City.ToList();
 
 			ViewData["Sliders"] = _context.Slider.ToList();
+
+			ViewData["NumberOfAccounts"] = _context.Users.Count();
+			ViewData["NumberOfRestaurants"] = _context.Restaurant.Count();
+			ViewData["NumberOfReviews"] = _context.Review.Count();
+			ViewData["NumberOfBookings"] = _context.Booking.Count();
 
 			foreach (var restaurant in restaurants)
 			{

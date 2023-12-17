@@ -21,7 +21,7 @@ namespace RestaurantRaterBooking.Controllers
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            var appContext = _context.Blog.Include(b => b.PostCategory);
+            var appContext = _context.Blog.Include(b => b.PostCategory).Where(b => b.IsPublish == true);
             return View(await appContext.ToListAsync());
         }
 
@@ -37,7 +37,8 @@ namespace RestaurantRaterBooking.Controllers
                 .Include(b => b.PostCategory)
                 .Include(b => b.BlogTags)
                 .ThenInclude(bt => bt.Tag)
-                .FirstOrDefaultAsync(m => m.Id == id);
+				.Where(b => b.IsPublish == true)
+				.FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
@@ -45,15 +46,15 @@ namespace RestaurantRaterBooking.Controllers
 
             // Lấy danh sách các bài viết có cùng danh mục
             var relatedBlogsByCategory = await _context.Blog
-                .Include(n => n.PostCategory)
-                .Where(n => n.PostCategoryID == blog.PostCategoryID && n.Id != blog.Id)
+                .Include(b => b.PostCategory)
+                .Where(b => b.PostCategoryID == blog.PostCategoryID && b.Id != blog.Id && b.IsPublish==true)
                 .Take(3)
                 .ToListAsync();
 
             // Lấy danh sách các bài viết khác không cùng danh mục
             var relatedBlogsNotByCategory = await _context.Blog
                 .Include(n => n.PostCategory)
-                .Where(n => n.PostCategoryID != blog.PostCategoryID && n.Id != blog.Id)
+                .Where(n => n.PostCategoryID != blog.PostCategoryID && n.Id != blog.Id && n.IsPublish == true)
                 .Take(3)
                 .ToListAsync();
 

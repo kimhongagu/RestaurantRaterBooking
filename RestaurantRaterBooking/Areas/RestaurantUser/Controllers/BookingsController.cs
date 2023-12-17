@@ -25,13 +25,16 @@ namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 		// GET: RestaurantUser/Bookings
 		public async Task<IActionResult> Index(Guid restaurantId)
 		{
-			//var restaurantId = (User.FindFirst(ClaimTypes.NameIdentifier).Value).ToString();
+			if (TempData.ContainsKey("restaurantId") && TempData["restaurantId"] is Guid resId)
+			{
+				restaurantId = resId;
+			}
 			var appContext = _context.Booking.Include(b => b.User)
-				.Where(r => r.RestaurantID == restaurantId && r.Status != Status.Unpaid && r.Status != Status.AutoCanceled);
+			.Where(r => r.RestaurantID == restaurantId && r.Status != Status.Unpaid && r.Status != Status.AutoCanceled);
 			return View(await appContext.ToListAsync());
 		}
 
-		public async Task<IActionResult> UpdateStatus(Guid bookingId, string status)
+		public async Task<IActionResult> UpdateStatus(Guid bookingId, string status, Guid restaurantId)
 		{
 			try
 			{
@@ -58,7 +61,7 @@ namespace RestaurantRaterBooking.Areas.RestaurantUser.Controllers
 
 				_context.Update(booking);
 				await _context.SaveChangesAsync();
-
+				TempData["restaurantId"] = restaurantId;
 				return RedirectToAction("Index");
 			}
 			catch (Exception ex)

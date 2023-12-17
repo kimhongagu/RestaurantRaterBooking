@@ -148,7 +148,7 @@ namespace RestaurantRaterBooking.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Search(Guid categoryID, string? searchKeyword, int? page)
+		public async Task<IActionResult> Search(Guid cityID, string? searchKeyword, int? page)
 		{
 			int pageSize = 4;
 			int pageNumber = (page ?? 1);
@@ -159,9 +159,9 @@ namespace RestaurantRaterBooking.Controllers
 				.Include(r => r.Images)
 				.Include(r => r.Reviews);
 
-			if (categoryID != Guid.Empty)
+			if (cityID != Guid.Empty)
 			{
-				restaurants = restaurants.Where(r => r.CategoryID == categoryID);
+				restaurants = restaurants.Where(r => r.CityID == cityID);
 			}
 
 			if (!string.IsNullOrEmpty(searchKeyword))
@@ -185,7 +185,7 @@ namespace RestaurantRaterBooking.Controllers
 								.Take(2)
 								.ToList();
 			ViewData["Categories"] = _context.Category.ToList();
-
+			ViewData["Cites"] = _context.City.ToList();
 			ViewData["Sliders"] = _context.Slider.ToList();
 
 			foreach (var restaurant in restaurants)

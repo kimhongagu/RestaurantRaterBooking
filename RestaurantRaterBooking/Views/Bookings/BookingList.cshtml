@@ -1,9 +1,11 @@
-﻿@{
+﻿@model PaymentVM
+@{
 	var bookingList = ViewData["BookingList"] as List<Booking>;
 }
 <!--====== Page Banner Start ======-->
 
-<section class="page-banner bg_cover" style="background-image: url(/assets/images/m13-bg-2.jpg);">
+@* <section class="page-banner bg_cover" style="background-image: url(/assets/images/m13-bg-2.jpg);"> *@
+<section class="page-banner bg_cover" style="background-image: url(/assets/hinhanh/bg-2-2.png);">
 	<div class="container">
 		<div class="page-banner-content text-center">
 			<h2 class="title">Lịch sử đặt bàn</h2>
@@ -50,13 +52,21 @@
 						<p>@item.Name</p>
 						<p>@item.PhoneNumber</p>
 					</td>
-					<td>@item.CreatedAt</td>
-					<td>@item.Note</td>
+					<td><p>@item.CreatedAt</p></td>
+					<td><p>@item.Note</p></td>
 
 					<td>
 						@if (item.Status == Status.Unpaid)
 						{
-							<button class="btn btn-outline-success">Thanh toán</button>
+							@* <a asp-area="" asp-controller="Payment" asp-action="PaymentWithPaypal" class="btn btn-outline-success">Thanh toán</a> *@
+							<form method="post" asp-action="PayUsingCard">
+									<input asp-for="Amount" class="form-control" value="4.12" type="hidden" />
+								<input asp-for="bookingId" class="form-control" value="@item.Id" type="hidden" />
+								<input asp-for="DateTime" class="form-control" value="@DateTime.Now" type="hidden" />
+								<div class="text-center">
+									<button asp-area="" asp-controller="PaypalPayment" asp-action="PayUsingCard" type="submit" class="btn btn-outline-success">Thanh toán</button>
+								</div>
+							</form>
 						}
 						else if (item.Status == Status.WaitingList)
 						{

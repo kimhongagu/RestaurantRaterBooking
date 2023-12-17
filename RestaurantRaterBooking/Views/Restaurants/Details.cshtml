@@ -32,12 +32,10 @@
 		z-index: 1;
 	}
 
-	/*set a border on the images to prevent shifting*/
 	#gallery_02 img {
 		border: 2px solid white;
 	}
 
-	/*Change the colour*/
 	.active img {
 		border: 2px solid #333 !important;
 	}
@@ -45,7 +43,7 @@
 
 <!--====== Page Banner Start ======-->
 
-<section class="page-banner bg_cover" style="background-image: url(/@Url.Content(path));">
+<section class="page-banner bg_cover" style="height: 680px;background-image: url(/@Url.Content(path));">
 	<div class="container">
 		<div class="page-banner-content text-center">
 			<h2 class="title">@Model.Name</h2>
@@ -300,7 +298,8 @@
 										<li>
 											<div class="single-review-comment">
 												<div class="review-author">
-													<img src="/assets/images/auhtor-1.jpg" alt="">
+													@* <img src="/assets/images/auhtor-1.jpg" alt=""> *@
+													<img src="/assets/hinhanh/person.png" alt="" />
 												</div>
 												<div class="review-content">
 													<div class="review-name-rating mt-0">

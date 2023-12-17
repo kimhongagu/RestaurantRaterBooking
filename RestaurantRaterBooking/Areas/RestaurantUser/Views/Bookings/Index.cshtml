@@ -59,7 +59,7 @@
 				<td>@item.CreatedAt</td>
 				<td>@item.Note</td>
 				<td>
-					<form asp-area="RestaurantUser" asp-controller="Bookings" asp-action="UpdateStatus">
+					<form asp-area="RestaurantUser" asp-controller="Bookings" asp-action="UpdateStatus" asp-route-restaurantId="@item.RestaurantID">
 						<input type="hidden" name="bookingId" value="@item.Id" />
 					@if (item.Status == Status.WaitingList)
 					{

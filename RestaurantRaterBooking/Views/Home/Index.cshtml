@@ -4,6 +4,7 @@
 	var blogs = ViewData["Blogs"] as List<Blog>;
 	var news = ViewData["News"] as List<News>;
 	var categories = ViewData["Categories"] as List<Category>;
+	var cities = ViewData["Cites"] as List<City>;
 	var sliders = ViewData["Sliders"] as List<Slider>;
 }
 <style>
@@ -39,7 +40,6 @@
 </section>
 
 <!--====== Slider Ends ======-->
-
 <!--====== Search Start ======-->
 
 <div class="header-navbar-8 d-none d-lg-block">
@@ -50,11 +50,11 @@
 					<form asp-area="" asp-controller="Restaurants" asp-action="Search" method="post">
 						<div class="header-search d-flex">
 							<div class="search-header-wrapper">
-								<select id="resizing_select" name="categoryId">
+								<select id="resizing_select" name="cityID">
 									<option value="0" selected="selected">All</option>
-									@foreach (var category in categories)
+									@foreach (var city in cities)
 									{
-										<option class="level-0" value="@category.Id">@category.Name</option>
+										<option class="level-0" value="@city.Id">@city.Name</option>
 									}
 								</select>
 								<select id="width_tmp_select">
@@ -187,9 +187,10 @@
 </section>
 
 <!--====== Restaurant Ends ======-->
+
 <!--====== Counter Start ======-->
 
-<div class="counter-area bg_cover" style="background-image: url(assets/images/m13-bg-1.jpg);">
+<div class="counter-area bg_cover" style="background-image: url(/assets/hinhanh/counter.png);">
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-3 col-sm-6">
@@ -198,8 +199,8 @@
 						<img src="assets/images/icon/m13-i-1.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">243</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfAccounts"]</span></span>
+						<p style="font-size: 24px;">Người dùng</p>
 					</div>
 				</div>
 			</div>
@@ -209,8 +210,8 @@
 						<img src="assets/images/icon/m13-i-2.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">67</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfRestaurants"]</span></span>
+						<p style="font-size: 24px;">Nhà hàng</p>
 					</div>
 				</div>
 			</div>
@@ -220,8 +221,8 @@
 						<img src="assets/images/icon/m13-i-3.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">1923</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfReviews"]</span></span>
+						<p style="font-size: 24px;">Lượt đánh giá</p>
 					</div>
 				</div>
 			</div>
@@ -231,8 +232,8 @@
 						<img src="assets/images/icon/m13-i-4.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">768</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfBookings"]</span></span>
+						<p style="font-size: 24px;">Lượt đặt bàn</p>
 					</div>
 				</div>
 			</div>
@@ -241,6 +242,7 @@
 </div>
 
 <!--====== Counter Ends ======-->
+
 <!--====== Blog Start ======-->
 
 <section class="blog-area pt-50 pb-50">
@@ -283,6 +285,7 @@
 </section>
 
 <!--====== Blog Ends ======-->
+
 <!--====== News Start ======-->
 
 <section class="blog-area pt-50 pb-50">
@@ -325,6 +328,7 @@
 </section>
 
 <!--====== News Ends ======-->
+
 <!--====== Features Start ======-->
 
 <section class="features-area pt- pb-30">
@@ -332,30 +336,34 @@
 		<div class="row">
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-truck-container"></i>
-					<h5 class="title">Free Delivery</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-truck-container"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/restaurant.png" />
+					<h5 class="title">Chọn nhà hàng</h5>
+					<p>Hàng trăm nhà hàng hấp dẫn</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-life-ring"></i>
-					<h5 class="title">Expert Support</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-life-ring"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/booking.png" />
+					<h5 class="title">Đặt bàn online</h5>
+					<p>Qua website nh3.com</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-gift"></i>
-					<h5 class="title">10% Discount</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-gift"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/checked.png" />
+					<h5 class="title">Xác nhận</h5>
+					<p>Kiểm tra trạng thái đơn đặt bàn</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-user-friends"></i>
-					<h5 class="title">Buyer Protection</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-user-friends"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/eat.png" />
+					<h5 class="title">Thưởng thức</h5>
+					<p>Thưởng thức bữa ăn ngon tại nhà hàng</p>
 				</div>
 			</div>
 		</div>
@@ -363,6 +371,7 @@
 </section>
 
 <!--====== Features Ends ======-->
+
 <section>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-TvIN9MR3EknjOY0ilZa4hVNQzBUbYF0Xf0Aq9U8CmOnzhbR5c5P+C6pu/wJBv+4BRlP3zozLwGTAV9p3MykJYg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </section>

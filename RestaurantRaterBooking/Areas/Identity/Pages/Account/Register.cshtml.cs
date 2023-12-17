@@ -137,7 +137,7 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 						var images = new List<Image>
 					{
 						new Image { ImagePath = "Uploads\\NoImage.jpg", ImageType = ImageType.RestaurantImage },
-						new Image { ImagePath = "Uploads\\NoImage-2.jpg", ImageType = ImageType.MenuImage },
+						new Image { ImagePath = "Uploads\\NoImage.jpg", ImageType = ImageType.MenuImage },
 					};
 						var restaurant = new Restaurant
 						{
@@ -145,7 +145,7 @@ namespace RestaurantRaterBooking.Areas.Identity.Pages.Account
 							Id = new Guid(),
 							Email = Input.Email,
 							Images = images,
-							CategoryID = Guid.Parse("19594a8b-1873-43c4-b21d-461b759c74a8"),
+							CategoryID = Guid.Parse("1d39b8ce-48c8-461b-bf6e-aaa0e38f57e9"),
 							CityID = Guid.Parse("f64676c0-06ab-497a-aaaf-3b811e985e9e")
 						};
 						//user.RestaurantID = restaurant.Id;
