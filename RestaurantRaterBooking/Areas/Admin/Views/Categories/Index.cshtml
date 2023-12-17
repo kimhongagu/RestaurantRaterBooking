@@ -59,7 +59,7 @@
 					@Html.DisplayFor(modelItem => item.Name)
 				</td>
 				<td>
-					<a class="btn btn-outline-primary editButton"
+					<a class="btn btn-outline-success editButton"
 					   data-toggle="modal"
 					   data-target="#editCategoryModal"
 					   data-id="@item.Id"
@@ -165,102 +165,6 @@
 		}
 	});
 </script>
-
-@* <!-- Modal for Edit -->
-<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form asp-action="Edit" enctype="multipart/form-data">
-					<input type="hidden" id="editId" name="Id" />
-					<div class="form-group">
-						<label for="editName">Name</label>
-						<input type="text" class="form-control" id="editName" name="Name" />
-					</div>
-					<div class="form-group">
-						<label for="CoverImage" class="control-label"></label>
-						<img id="currentImage" name="CoverImage" src="" style="max-width: 100px; max-height: 100px;" />
-						<div class="input-group">
-							<input for="CoverImage" name="CoverImage2" type="file" class="form-control" id="fileInput" style="display: none;" onchange="displaySelectedImage()" />
-							<input type="text" class="form-control" name="CoverImagePath" readonly id="currentImagePath" />
-							<div class="input-group-append">
-								<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click();">Chọn tệp</button>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Save Changes</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<script>
-	function displaySelectedImage() {
-		var fileInput = document.getElementById('fileInput');
-		var currentImage = document.getElementById('currentImage');
-		var currentImagePath = document.getElementById('currentImagePath');
-
-		var selectedFile = fileInput.files[0];
-		if (selectedFile) {
-			var reader = new FileReader();
-			reader.onload = function (e) {
-				currentImage.src = e.target.result;
-			};
-			reader.readAsDataURL(selectedFile);
-
-			currentImagePath.value = selectedFile.name;
-		}
-	}
-
-	$(document).ready(function () {
-		$('.editButton').click(function () {
-			var id = $(this).data('id');
-			var name = $(this).data('name');
-			var currentImage = $(this).data('image');
-
-			$('#editId').val(id);
-			$('#editName').val(name);
-			$('#currentImage').attr('src', currentImage);
-			$('#currentImagePath').val(currentImage);
-			$('#editCategoryModal').modal('show');
-		});
-
-		$('#fileInput').change(displaySelectedImage);
-
-		$('#editCategoryForm').submit(function (e) {
-			e.preventDefault();
-
-			var formData = new FormData();
-			formData.append('Id', $('#editId').val());
-			formData.append('Name', $('#editName').val());
-			formData.append('CoverImage', $('#fileInput')[0].files[0]);
-			console.log("in"+formData);
-			$.ajax({
-				type: 'POST',
-				url: '/Categories/Edit',
-				data: formData,
-				contentType: false,
-				processData: false,
-				success: function (data) {
-					$('#editCategoryModal').modal('hide');
-					location.reload();
-				},
-				error: function (xhr, status, error) {
-					console.error(xhr.responseText);
-				}
-			});
-		});
-	});
-</script> *@
 
 <!-- Modal for Edit -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

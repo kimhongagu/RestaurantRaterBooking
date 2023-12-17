@@ -4,9 +4,14 @@
 	var blogs = ViewData["Blogs"] as List<Blog>;
 	var news = ViewData["News"] as List<News>;
 	var categories = ViewData["Categories"] as List<Category>;
+	var cities = ViewData["Cites"] as List<City>;
 	var sliders = ViewData["Sliders"] as List<Slider>;
 }
 <style>
+	.nav-item:hover .image-hover {
+		border-color: #ef5619;
+	}
+
 	.pagination .page-item.active .page-link {
 		background-color: black !important;
 		border-color: black !important;
@@ -19,24 +24,6 @@
 		justify-content: center;
 		text-align: center !important;
 	}
-
-	.star-container {
-		display: flex;
-		align-items: center;
-	}
-
-	.title {
-		margin-right: 5px;
-	}
-
-	.star {
-		color: #ccc; /* Màu xám cho ngôi sao chưa được đánh giá */
-	}
-
-	.star-fill {
-		color: gold; /* Màu vàng cho ngôi sao được đánh giá */
-	}
-
 </style>
 
 <!--====== Slider Start ======-->
@@ -53,7 +40,6 @@
 </section>
 
 <!--====== Slider Ends ======-->
-
 <!--====== Search Start ======-->
 
 <div class="header-navbar-8 d-none d-lg-block">
@@ -64,11 +50,11 @@
 					<form asp-area="" asp-controller="Restaurants" asp-action="Search" method="post">
 						<div class="header-search d-flex">
 							<div class="search-header-wrapper">
-								<select id="resizing_select" name="categoryId">
+								<select id="resizing_select" name="cityID">
 									<option value="0" selected="selected">All</option>
-									@foreach (var category in categories)
+									@foreach (var city in cities)
 									{
-										<option class="level-0" value="@category.Id">@category.Name</option>
+										<option class="level-0" value="@city.Id">@city.Name</option>
 									}
 								</select>
 								<select id="width_tmp_select">
@@ -90,7 +76,6 @@
 </div>
 
 <!--====== Search Ends ======-->
-
 <!--====== Restaurant Start ======-->
 
 <section class="product-area pt-75 pb-70">
@@ -112,7 +97,7 @@
 						<li class="nav-item">
 							<a asp-area="" asp-controller="Categories" asp-action="Index" asp-route-id="@category.Id" class="nav-link">
 								<div class="row align-items-center">
-									<img style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; border: 1px solid black;" src="@category.Image" alt="@category.Name" class="mx-auto d-block mb-2">
+									<img style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; border: 1px solid black;" src="@category.Image" alt="@category.Name" class="mx-auto d-block mb-2 image-hover">
 									<span class="text-center">@category.Name</span>
 								</div>
 							</a>
@@ -133,19 +118,16 @@
 							<div class="single-product mt-50">
 								<div class="product-image">
 									<div class="image">
-										@* <img class="product-1" src="assets/images/product/product-89.jpg" alt="product"> *@
 										<img class="product-1" style="height: 300px; object-fit: cover; object-position: center; " src="~/@restaurantImage">
 										<a class="link" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"></a>
 									</div>
 									<ul class="product-meta text-center">
 										<li><a data-bs-tooltip="tooltip" asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id"><i class="fal fa-search-plus"></i></a></li>
-										@* <li><a data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Wishlist" href="#"><i class="fal fa-heart"></i></a></li> *@
-										@* data-bs-placement="top" title="Quick Shop" data-bs-toggle="modal" data-bs-target="#productQuick" *@
 									</ul>
 								</div>
 								<div class="product-content d-flex flex-column align-items-center">
 									<div class="mb-2 product-title">
-										<h4 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id">@restaurant.Name</a></h4>
+										<h3 class="title"><a asp-controller="Restaurants" asp-action="Details" asp-route-id="@restaurant.Id">@restaurant.Name</a></h3>
 									</div>
 									<div class="d-flex align-items-center">
 										<h4 class="title">@restaurant.AverageRating</h4>
@@ -154,20 +136,18 @@
 											{
 												if (i <= restaurant.AverageRating)
 												{
-													<i class="fas fa-star star-fill"></i>
+													<i class="fas fa-star star-fill" style="color: #ffd700;"></i>
 												}
-												else if (i - 1 < restaurant.AverageRating)
+												else if (i - 0.5 <= restaurant.AverageRating)
 												{
 													<i class="fas fa-star-half-alt" style="color: #ffd700;"></i>
 												}
 												else
 												{
-													<i class="fas fa-star" style="color: #ffd700;"></i>
+													<i class="fas fa-star" style="color: #d3d3d3;"></i>
 												}
 											}
-											@* <div class="star-inner">&#9733;&#9733;&#9733;&#9733;&#9733;</div> *@
 										</div>
-
 									</div>
 								</div>
 							</div>
@@ -177,7 +157,7 @@
 			</div>
 		</div>
 
-		<div class="pagination-items pt-120">
+		<div class="pagination-items pt-50">
 			<ul class="pagination justify-content-center">
 				@if (pagedListRestaurants.HasPreviousPage)
 				{
@@ -208,50 +188,50 @@
 <!--====== Restaurant Ends ======-->
 <!--====== Counter Start ======-->
 
-<div class="counter-area bg_cover" style="background-image: url(/assets/images/m13-bg-1.jpg);">
+<div class="counter-area bg_cover" style="background-image: url(/assets/hinhanh/counter.png);">
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-3 col-sm-6">
 				<div class="single-counter">
 					<div class="counter-icon">
-						<img src="/assets/images/icon/m13-i-1.png" alt="">
+						<img src="assets/images/icon/m13-i-1.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">243</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfAccounts"]</span></span>
+						<p style="font-size: 24px;">Người dùng</p>
 					</div>
 				</div>
 			</div>
 			<div class="col-lg-3 col-sm-6">
 				<div class="single-counter">
 					<div class="counter-icon">
-						<img src="/assets/images/icon/m13-i-2.png" alt="">
+						<img src="assets/images/icon/m13-i-2.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">67</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfRestaurants"]</span></span>
+						<p style="font-size: 24px;">Nhà hàng</p>
 					</div>
 				</div>
 			</div>
 			<div class="col-lg-3 col-sm-6">
 				<div class="single-counter">
 					<div class="counter-icon">
-						<img src="/assets/images/icon/m13-i-3.png" alt="">
+						<img src="assets/images/icon/m13-i-3.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">1923</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfReviews"]</span></span>
+						<p style="font-size: 24px;">Lượt đánh giá</p>
 					</div>
 				</div>
 			</div>
 			<div class="col-lg-3 col-sm-6">
 				<div class="single-counter">
 					<div class="counter-icon">
-						<img src="/assets/images/icon/m13-i-4.png" alt="">
+						<img src="assets/images/icon/m13-i-4.png" alt="">
 					</div>
 					<div class="counter-content">
-						<span class="count"><span class="counter">768</span></span>
-						<p>Montague Paratrooper</p>
+						<span style="font-size: 50px;" class="count"><span class="counter">@ViewData["NumberOfBookings"]</span></span>
+						<p style="font-size: 24px;">Lượt đặt bàn</p>
 					</div>
 				</div>
 			</div>
@@ -262,7 +242,7 @@
 <!--====== Counter Ends ======-->
 <!--====== Blog Start ======-->
 
-<section class="blog-area pt-75 pb-80">
+<section class="blog-area pt-50 pb-50">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
@@ -289,7 +269,7 @@
 						<div class="blog-content text-center">
 							<h4 class="title"><a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id">@blog.Title</a></h4>
 							<ul class="blog-meta">
-								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#">By <span> @blog.CreatedBy</span></a></li>
 								<li><a href="#"><i class="fal fa-clock"></i> @blog.CreatedAt</a></li>
 							</ul>
 						</div>
@@ -302,9 +282,10 @@
 </section>
 
 <!--====== Blog Ends ======-->
+
 <!--====== News Start ======-->
 
-<section class="blog-area pt-75 pb-80">
+<section class="blog-area pt-50 pb-50">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
@@ -331,7 +312,7 @@
 						<div class="blog-content text-center">
 							<h4 class="title"><a asp-controller="News" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h4>
 							<ul class="blog-meta">
-								<li><a href="#">By <span> Jon Smith</span></a></li>
+								<li><a href="#">By <span> @item.CreatedBy</span></a></li>
 								<li><a href="#"><i class="fal fa-clock"></i> @item.CreatedAt</a></li>
 							</ul>
 						</div>
@@ -344,6 +325,7 @@
 </section>
 
 <!--====== News Ends ======-->
+
 <!--====== Features Start ======-->
 
 <section class="features-area pt- pb-30">
@@ -351,30 +333,34 @@
 		<div class="row">
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-truck-container"></i>
-					<h5 class="title">Free Delivery</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-truck-container"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/restaurant.png" />
+					<h5 class="title">Chọn nhà hàng</h5>
+					<p>Hàng trăm nhà hàng hấp dẫn</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-life-ring"></i>
-					<h5 class="title">Expert Support</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-life-ring"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/booking.png" />
+					<h5 class="title">Đặt bàn online</h5>
+					<p>Qua website nh3.com</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-gift"></i>
-					<h5 class="title">10% Discount</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-gift"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/checked.png" />
+					<h5 class="title">Xác nhận</h5>
+					<p>Kiểm tra trạng thái đơn đặt bàn</p>
 				</div>
 			</div>
 			<div class="col-md-3 col-sm-6">
 				<div class="single-feature text-center mt-30">
-					<i class="fal fa-user-friends"></i>
-					<h5 class="title">Buyer Protection</h5>
-					<p>In convallis nulla et magna congue</p>
+					@* <i class="fal fa-user-friends"></i> *@
+					<img style="width: 40px; height: 40px;" src="~/uploads/eat.png" />
+					<h5 class="title">Thưởng thức</h5>
+					<p>Thưởng thức bữa ăn ngon tại nhà hàng</p>
 				</div>
 			</div>
 		</div>
@@ -382,6 +368,7 @@
 </section>
 
 <!--====== Features Ends ======-->
+
 <section>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-TvIN9MR3EknjOY0ilZa4hVNQzBUbYF0Xf0Aq9U8CmOnzhbR5c5P+C6pu/wJBv+4BRlP3zozLwGTAV9p3MykJYg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </section>

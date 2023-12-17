@@ -6,7 +6,7 @@
 }
 <!--====== Page Banner Start ======-->
 
-<section class="page-banner bg_cover" style="background-image: url(/assets/images/page-banner-4.jpg);">
+<section class="page-banner bg_cover" style="background-image: url(/assets/hinhanh/1920_715.png);">
 	<div class="container">
 		<div class="page-banner-content text-center">
 			<h2 class="title">Login</h2>
@@ -35,12 +35,12 @@
 								<input asp-for="Input.Email" autocomplete="username" aria-required="true" placeholder="name@example.com">
 								<span asp-validation-for="Input.Email" class="text-danger"></span>
 							</div>
-							<div class="single-form">
+							<div class="single-form mt-0">
 								<label>Password</label>
 								<input asp-for="Input.Password" autocomplete="current-password" aria-required="true" placeholder="password" type="password">
 								<span asp-validation-for="Input.Password" class="text-danger"></span>
 							</div>
-							<div class="single-form d-flex justify-content-between">
+							<div class="single-form d-flex justify-content-between mt-0">
 								<div class="checkbox">
 									<input asp-for="Input.RememberMe" type="checkbox" id="remember">
 									@Html.DisplayNameFor(m => m.Input.RememberMe)

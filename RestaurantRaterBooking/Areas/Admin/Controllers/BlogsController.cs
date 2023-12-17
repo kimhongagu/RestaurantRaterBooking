@@ -52,7 +52,7 @@ namespace RestaurantRaterBooking.Areas.Admin.Controllers
 
             var blog = await _context.Blog
                 .Include(b => b.PostCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+				.FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
